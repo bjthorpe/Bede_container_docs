@@ -1,5 +1,8 @@
 # sphinx build folder
-_build
+build
+make.bat
+Makefile
+conf.py
 
 # Compiled source #
 ###################
