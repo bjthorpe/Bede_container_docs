@@ -13,8 +13,8 @@ simply refer to them by name.
 .. [1] At time of writing (Dec 2025)
 .. _Matbench Discovery: https://matbench-discovery.materialsproject.org/
 
-To use a model, for example with the current number 
-1 eSEN-30M-OAM, we first need to load the model with:
+To use a model, for example the current number 
+one model, eSEN-30M-OAM, we first need to load the model with:
 
 .. code-block:: bash
 
@@ -91,11 +91,7 @@ From here you could do some further analysis with ASE or convert the data for us
 with another tool. In our case we will move on to calculating charge density 
 using CASTEP.
 
-Using Castep
-************
-
-
-Running an ollama container
----------------------------
+Interfacing with Castep
+***********************
 
 
