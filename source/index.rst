@@ -59,5 +59,7 @@ We have chosen containers as a way of interfacing with AI/ML models on Bede for 
    :caption: Contents:
 
    Getting_started
+   Ollama
    Examples
    Developer
+   

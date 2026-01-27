@@ -9,18 +9,19 @@ first need to register for an account. Instructions for
 this can be found in the `Bede Documentation.`_
 
 You will also need to ensure you are logged into the 
-Grace-Hopper partition `using the ghlogin command.`_
+Grace-Hopper partition using the `ghlogin command.`_
 
 Alternatively if you wish to install the ML toolkit on 
 you local machine you can find instructions under the 
-:ref:`Developer Notes <Developer>`.
+:ref:`Developer Notes <Developer>`. you can then skip 
+forward to to the section "Your first Container".
 
 .. _Bede Documentation.: https://bede-documentation.readthedocs.io/en/latest/usage/index.html#using-bede
 
-.. _using the ghlogin command.: https://bede-documentation.readthedocs.io/en/latest/usage/index.html#connecting-to-the-ghlogin-node
+.. _ghlogin command.: https://bede-documentation.readthedocs.io/en/latest/usage/index.html#connecting-to-the-ghlogin-node
 
-Installation instructions
--------------------------
+Bede Installation instructions
+------------------------------
 
 Once you are logged into the Bede Grace-Hopper node you will need to obtain
 the python code using:
@@ -37,7 +38,15 @@ Next you will need to install some python packages using pip. We recommend using
 
     python3 -m venv ML_Toolkit
     source ML_Toolkit/bin/activate
-    pip install requirements.txt
+    pip install dacite pyyaml
+
+Optionally you can also install pytest to run the unit tests using:
+
+.. code-block:: bash
+
+    pip install pytest
+    pytest
+
 
 Once this is complete we shall now run a small test container to check everything 
 is working correctly.
@@ -52,28 +61,99 @@ ASCII art pictures of a cow with a message.
 
 .. _cowsay: https://cowsay.diamonds/
 
-A script to setup and run this container can be found under Definitions/cowsay.def
+An Apptainer defintion file to setup and run this container can be found under 
+Definitions/cowsay.def. This can be thought of as a blueprint that tell 
+Apptainer how to setup the system and what software to install.
 
-It can be built with the following command (note this is case sensitive):
+These can be quite involved and a full tutorial on Apptainer is beyond the scope 
+of this document. However those interested can consult this `Tutorial`_ or the 
+Apptainer `Documentation`_ for a full breakdown of how these files work. 
+
+.. _Tutorial: https://deepwiki.com/apptainer/apptainer-userdocs/2.1-definition-files
+.. _Documentation: https://apptainer.org/docs/user/main/definition_files.html
+
+For our purposes however, we It can build the container with the following 
+command (note this is case sensitive):
 
 .. code-block:: bash
 
     ./ML_Toolkit build TestContainer
 
-This will download and build the cowsay container from the script and create a 
+This will download and build the cowsay container from the defintion file and create a 
 container image TestContainer.sif in the Images directory. A container image contains 
 all the files the container needs to run in a format Apptainer can understand.
 
-For right now we can run a command inside this container using:
+Once this is complete we can run a command inside this container using:
 
 .. code-block:: bash
 
-    ./ML_Toolkit run TestContainer cowsay "It works!!!"
+    ./ML_Toolkit run TestContainer COMMAND 
+
+Where COMMAND is the Linux command we wish the container to run. In our case the is 
+cowsay followed by a message to be displayed.
+
+.. code-block:: bash
+
+    ./ML_Toolkit run TestContainer cowsay "It works"
 
 If all has gone to plan you should see the following output:
 
 .. code-block:: bash
+    
+    *********************************************************************
+    ***************** Loading Model Config Files ************************
+    *********************************************************************
+    Reading config from file: Container_Configs/ollama.yaml
+    Container_Configs/ollama.yaml OK
+    Reading config from file: Container_Configs/test1.yaml
+    Container_Configs/test1.yaml OK
+    Reading config from file: Container_Configs/test2.yaml
+    Container_Configs/test2.yaml OK
+    *********************************************************************
+    ***************** Running: TestContainer *********************
+    *********************************************************************
+    __________
+    < It works>
+    ----------
+            \   ^__^
+            \   (oo)\_______
+                (__)\       )\/\
+                    ||----w |
+                    ||     ||
 
+You will also find a more detailed output in the logfile logs/log.log. 
+This is overwritten each time you use the build or run command and 
+notably does not contain the output of the container itself. However 
+it does contain useful information.
 
-Something more interesting:
----------------------------
+This includes: 
++ what files/folders the container is accessing
++ a summary of the underlying Apptainer commands the script is running 
++ Warnings about config issues that won't necessarily crash the 
+container but may cause issues. 
+
+All of which is useful for debugging.
+
+Getting our bearings
+--------------------
+
+The software we downloaded contains a number of different files 
+and folders so I think it is worthwhile briefly covering the 
+important files/folders and what each of them is used for.
+
+For files the only things that is relevant is Bede_containers.sh 
+which is the main script used to run the software.
+
+Some important/useful directories are:
+
+- **Container_Configs:** Contains all the .yaml config files used to configure the containers.
+- **Definitions:** Contains a number of .def files used to build containers.
+- **Examples:** Contains various python scripts to demonstrate how to use pre-trained models from MatBench Discovery
+- **Images:** Contains the container images (.sif) files used by Apptainer. These store all the data and files used by the container.
+- **Models:** Checkpoint Files used for the various pre-trained models.
+- **logs:** Log files containing more detailed output from the program, useful for debugging.
+- **src:** The python source files used by the program
+- **tests:** Various files and scripts used by pytest for conducting unit tests.
+
+Anything else is just used for development and can be safely ignored for now.
+
