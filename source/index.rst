@@ -1,14 +1,14 @@
-.. ML Container toolkit documentation master file, created by
+.. ML_Toolkit documentation master file, created by
    sphinx-quickstart on Mon Nov 24 14:46:00 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ML Container toolkit documentation
-=============================================
+Welcome to ML_Toolkit documentation
+===================================
 
 Introduction:
 -------------
-ML Container toolkit is a python script designed to make working with ML/AI models 
+ML_Toolkit is a python script designed to make working with ML/AI models 
 simpler and easier on the Bede grace hopper nodes. 
 
 Containers
@@ -38,21 +38,20 @@ Why do we use them?
 
 We have chosen containers as a way of interfacing with AI/ML models on Bede for a number of reasons:
 
-    We, the developers, take on the effort to ensure that all software dependencies are met meaning 
+    1. We, the developers, take on the effort to ensure that all software dependencies are met meaning 
     that the users can focus on getting up and running as quickly as possible.
 
-    The portability of containers means that, whether working on a laptop or a HPC cluster, a 
-    container pull (or download) is all that’s required and users’ workflows can be easily moved 
-    from machine to machine when scaling up to a larger resource is required.
+    2. Containers are portable. This means that, whether working on a laptop or a HPC cluster, a 
+    container pull (or download) is usually all that’s required and users’ workflows can be easily moved 
+    from machine to machine, such as when scaling up to a larger resource.
 
-    The small impact on performance is far outweighed by the benefits of easy installation compared 
-    with a local installation.
+    3. They do not require you to rig-fence entre sections of your hardware for a single process, such as a chunk of cpu cores or ram.
 
-    Containers offer superior performance compared with virtual machines and can more easily 
-    make use of hardware acceleration with GPUs.
+    4. They can more easily make use of hardware acceleration with GPUs.
 
-    Containers allow us to install external modules each with their own dependencies isolated from one 
-    another.
+    5. They allow us to install external modules each with their own dependencies isolated from one 
+    another. You can also easily lock them to extremally specific versions of software so that they will not 
+    suddenly break when external libraries are updated.
 
 .. toctree::
    :maxdepth: 2
