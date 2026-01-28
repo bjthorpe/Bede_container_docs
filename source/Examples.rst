@@ -1,5 +1,7 @@
-Examples
-========
+.. _Examples:
+
+ML Atomic Potentials 
+====================
 
 Using MatBench Discovery Models
 -------------------------------
@@ -78,14 +80,14 @@ of a hydrogen molecule and using ASE and MatterSim:
     write('H2.xyz', h2)
     h2.get_potential_energy()
 
-This should be run with the ML container toolkit as:
+This should be run with the ML_Toolkit toolkit as:
 
 .. code-block:: bash
 
     # This only needs to be done the first time
-    python3 main.py build MatterSim
+    ./ML_Toolkit build MatterSim
     
-    python3 main.py run MatterSim python3 Examples/H2_MatterSim.py
+    ./ML_Toolkit run MatterSim python3 Examples/H2_MatterSim.py
 
 From here you could do some further analysis with ASE or convert the data for use 
 with another tool. In our case we will move on to calculating charge density 
