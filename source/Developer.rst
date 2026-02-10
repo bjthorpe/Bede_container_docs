@@ -2,12 +2,16 @@ Developer Notes
 ==================
 .. _Developer:
 
-Local Installation
-******************
-WRITE ME!!!!
+Reporting any issues
+--------------------
+
+if you have any issues with the software or any feature requests feel free to report them on the 
+`git hub page`_ or email me (ben.thorpe@york.ac.uk).
+
+.. _github page: https://github.com/bjthorpe/Bede_containers
 
 Debugging tips:
-***************
+---------------
 If you need to debug containers, a good place to 
 start is the log file under :code:`logs/log.log`. This 
 contains more detailed output and lots of other 
