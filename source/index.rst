@@ -9,14 +9,16 @@ Welcome to ML_Toolkit documentation
 Introduction:
 -------------
 ML_Toolkit is a python script designed to make working with ML/AI models 
-simpler and easier on the Bede grace hopper nodes. 
+simpler and easier on the Bede grace hopper nodes by using containers. 
+
+These docs apply to version 0.9 (tagged as V0.9 on github) 
 
 Containers
 ----------
 
 What are they?
 **************
-If you are unfamiliar with containers, here is a quick overview from opensource.com1:
+If you are unfamiliar with containers, here is a quick overview from opensource.com:
 
     “Containers, in short, contain applications in a way that keep them isolated from 
     the host system that they run on. Containers allow a developer to package up an 
@@ -58,7 +60,9 @@ We have chosen containers as a way of interfacing with AI/ML models on Bede for 
    :caption: Contents:
 
    Getting_started
-   Ollama
    Examples
+   Ollama
+   Options
    Developer
+   
    

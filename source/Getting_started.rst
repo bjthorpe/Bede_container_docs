@@ -12,9 +12,9 @@ You will also need to ensure you are logged into the
 Grace-Hopper partition using the `ghlogin command.`_
 
 Alternatively if you wish to install the ML toolkit on 
-you local machine you can find instructions under the 
-:ref:`Developer Notes <Developer>`. you can then skip 
-forward to to the section "Getting Your Bearings".
+you local machine you can just be aware some of the instructions 
+will only apply to Bede (although I will try to make it clear when
+this is the case).
 
 .. _Bede Documentation.: https://bede-documentation.readthedocs.io/en/latest/usage/index.html#using-bede
 
@@ -32,21 +32,18 @@ the python code using:
     cd Bede_containers
 
 Next you will need to install some python packages using pip. We recommend using a 
-`virtual environment`_` for this:
+`virtual environment`_ for this:
 
 .. code-block:: bash
 
     python3 -m venv ML_Toolkit
     source ML_Toolkit/bin/activate
-    pip install dacite pyyaml
+    pip install dacite pyyaml pytest
 
-Optionally you can also install pytest to run the unit tests using:
+Optionally you can run the unit tests using:
 
 .. code-block:: bash
-
-    pip install pytest
     pytest
-
 
 Getting our bearings
 --------------------
@@ -62,7 +59,7 @@ In order to use containers with the ML_Toolkit we need two things:
    
 Both of these combined will tell ML_Toolkit and Apptainer what software, files 
 and steps are needed in order to build our container. We will go into more detail 
-about these files in later sections. 
+about how these are constructed files in later sections. 
 
 The Container_Configs directory holds a bunch of example config files most of which
 are for accessing for the various pre-trained models used for Machine learned atomic
@@ -135,13 +132,13 @@ Once this is complete we can run a command inside this container using:
     ./ML_Toolkit run TestContainer COMMAND 
 
 Where COMMAND is the Linux command we wish the container to run. In our case this is 
-cowsay followed by a message, enclosed with double quotes "", to be displayed.
+cowsay followed by a message to be displayed, enclosed with double quotes "".
 
 .. code-block:: bash
 
     ./ML_Toolkit run TestContainer cowsay "It works"
 
-If all has gone to plan you should see the following output:
+If all has gone to plan you should see similar output to the following:
 
 .. code-block:: bash
     
@@ -172,6 +169,7 @@ notably does not contain the output of the container itself. In this
 case the Ascii art cow. However it does contain useful information including:
 
 + what files/folders the container is accessing
++ the variables used for each config ML_Toolkit has found
 + a summary of the underlying Apptainer commands the script is running 
 + Warnings about config issues that won't necessarily crash the container but may cause issues. 
 
@@ -204,6 +202,15 @@ Will list only list containers with the tag Test.
 
 **Start** and **Stop** are also useful commands they allow you to run 
 containers as background processes which is useful for certain types of software.
+
+The **Start** command runs the command defined in the definition (.def) file 
+under the section `%startscript`_. You can also list all currently running containers 
+with:
+.. code-block:: bash
+
+    apptainer instance list.
+
+.. _%startscript: https://apptainer.org/docs/user/main/definition_files.html#startscript
 
 Getting Help:
 -------------

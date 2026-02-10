@@ -81,13 +81,11 @@ Container Definitions
 *********************
 
 Next we need a container definition. This is a blueprint that tells Apptainer how to create 
-our container. For this we have two options:
+our container. For this we will create our own .def file that is based on a definition from
+an external container repository. 
 
-1. create our own .def file
-2. download a definition from an external container repository
-
-In our case we will use option 2 as creating a definition file
-is quite involved. Especially with software as complex as Ollama.
+This is useful when dealing with software as complex as Ollama. As much of the hard work 
+has already been done for us we just simply need to tweak it to suit our needs.
 
 Apptainer can access several different container repositories, 
 such as Container Library and ORAS.
@@ -105,9 +103,9 @@ amount of popular software. Including Ollama.
 .. _Ollama: https://ollama.com/
 
 To use the definition from dockerhub with our container we will need to
-update the config file. 
+find the apropriate link to dockerhub. 
 
-Links to docker hub come int two parts a repo name and a version tag 
+Links to dockerhub come in two parts a repo name and a version tag 
 and have the form:
 
 .. code-block:: bash
@@ -116,36 +114,57 @@ and have the form:
 
 In our case we don't need the docker pull section just the repo name and tag.
 So to find the software we want we will need to search on `dockerhub`_.
-In our case Ollama has an official `image`_. To use it we 
-will need to update the entry for the container definition  
-(not forgetting the 4 spaces at the start) to read:
+In our case Ollama has an official `image`_.
 
 .. _image: https://hub.docker.com/r/ollama/ollama
 
-.. code-block:: yaml
+To use this we will need to create a container new .def file. In the Definitions
+directory, Create a new file. Ollama.def that reads as follows:
 
-        container_definition: "ollama/ollama:0.15.2"
+.. code-block:: bash
 
+    Bootstrap: docker
+    From: ollama/ollama:0.15.2
+    # Commands to run when building the container
+    %post -c /bin/bash
+        apt update && \
+        apt -y install python3.12 \
+        python3.12-venv python3-pip && \
+        python3 -m venv /envs/Ollama_env && \
+        source /envs/Ollama_env/bin/activate && \
+        pip install ollama
 
-This tells ML_Toolkit to get the definition from dockerhub for version 0.15.2 
-of Ollama, the latest version available at the time of writing. Note: 
-This string we are using comes from the docker pull command. This can generally be 
-found at the bottom right of the page (see the red box on the screenshot, 
+    %startscript
+    # Command to run when starting as a background process  
+        ollama serve
+
+    %environment
+        # CHANGE THE NEXT LINE TO THE DIRECTORY YOU WISH TO STORE MODELS IN
+        export OLLAMA_MODELS="/CHANGE/ME"
+        export PATH="/envs/Ollama_env/bin:$PATH"
+
+The first two lines of this file tell Apptainer to start with the definition 
+from dockerhub for version 0.15.2 of Ollama, the latest version available 
+at the time of writing. Note: This string we are using comes from the docker 
+pull command. This can generally be found at the bottom right of the docker 
+`webpage`_ for the official Ollama image (see the red box on the screenshot, 
 you may need to scroll down to find it).
 
-.. figure:: images/the_great_sphinx_david_roberts.jpg
+.. _webpage: https://hub.docker.com/r/ollama/ollama
+
+.. figure:: images/ollama_page.png
     :alt: Screenshot of Ollama page on dockerhub
-    :width: 300
+    :width: 800
     :align: center
 
     Screenshot of Ollama page on dockerhub, The corresponding docker pull 
     command is located at the bottom right (shown by the red box with 
     number 1). depending on your device you may need to scroll down to
-    find it. The blue box (numbered 2) shows where we have set the version tag 
-    from the default.
+    find it. The blue box (numbered 2) shows where we have changed the 
+    version tag from the default.
 
-Brief note about tags
----------------------
+Brief aside about tags
+----------------------
 
 You may notice we are using a specific version of Ollama. 
 By default dockerhub assumes you want the latest available 
@@ -177,15 +196,16 @@ support builds for ARM64. However, its optional and not all images
 have ARM64 versions.
 
 This is also not helped by the fact it is not obvious at first glance 
-which do/don't provide them. The easiest way I've found to get this 
-information is look under tags (the green box marked 3). On that page 
-there is a column labelled OS/ARCH and you will need to check your 
-specific version for **linux/arm64** (not to be confused with the 
-similar looking linux/amd64 which are regular laptop/desktop cpus).
+which software does/doesn't provide them. The easiest way I've found 
+to get this information is look under tags (the green box marked 3). 
+On that page there is a column labelled OS/ARCH and you will need 
+to check your specific version for **linux/arm64** (not to be 
+confused with the similar looking linux/amd64 which are regular 
+laptop/desktop cpus).
 
-.. figure:: images/the_great_sphinx_david_roberts.jpg
+.. figure:: images/ollama_page2.png
     :alt: Screenshot of Ollama page on dockerhub
-    :width: 300
+    :width: 800
     :align: center
 
     Screenshot of tags page for Ollama on dockerhub, The red box
@@ -194,3 +214,266 @@ similar looking linux/amd64 which are regular laptop/desktop cpus).
     only supports linux/amd64 whereas we need **linux/arm64** which is 
     included in the version tagged as "latest", and indeed version 0.15.2 
     which is off-screen further down the list.
+
+Back to the definition file
+***************************
+
+The next section of the .def file, begins at line 4 (the line starting %post).
+
+.. code-block:: bash
+
+    ...
+
+    %post -c /bin/bash
+        apt update && \
+        apt -y install python3.12 \
+        python3.12-venv python3-pip && \
+        python3 -m venv /envs/Ollama_env && \
+        source /envs/Ollama_env/bin/activate && \
+        pip install ollama
+
+    ...
+
+This defines the series of Linux commands that will be run during the build process.
+In our case, since we are basing our container of an existing one with Ollama already 
+installed. We just need to install python and the ollama pip package to allow us to 
+talk to the model via a python script.
+
+The next section begins at line 12 (the line starting %startscript) and defines the 
+command that runs when the container is started as a background process. In our 
+case this starts the ollama server.
+
+.. code-block:: bash
+
+    ...
+
+    %startscript
+    # Command to run when starting as a background process  
+        ollama serve
+
+    ...
+
+The final section %environment defines some variables used by ollama. In our case we
+need to **change line 17** to the directory you wish to store models in. We recommend
+using the Models directory within the ML_Toolkit installation.
+
+.. code-block:: bash
+
+    ...
+    %environment
+    # CHANGE THE NEXT LINE TO THE DIRECTORY YOU WISH TO STORE MODELS IN
+    export OLLAMA_MODELS="/path/to/ML_Toolkit/Models/directory"
+    # Leave this line as is
+    export PATH="/envs/Ollama_env/bin:$PATH"
+    ...
+
+As far as definition files go Apptainer has many more options for more advanced use cases.
+You can find out more in the Apptainer `Documentation`_. However, This is all we need for
+our purposes.
+
+.. _Documentation: https://apptainer.org/docs/user/main/definition_files.html
+
+With that we have just one final step, adding our new definition to the container config.
+Change the container_defintion line in ollama.yaml to the following: 
+(remember there should be 4 spaces at the start of the line).
+
+.. code-block:: yaml
+
+        container_definition: Defintions/Ollama.def
+
+Running the LLM
+***************
+
+So with the setup out of the way in order to run the llm will essentially need to 
+perform 4 steps:
+
+1. use the build command to build the container.
+2. use the start command to start the ollama server
+3. use the run command to start the model.
+4. use the stop command to cleanup and stop the ollama server once we have finished
+
+Frustratingly however, due to how Bede is setup, the exact steps now vary 
+depending on if you have installed ML_toolkit locally or are using 
+it on Bede.
+
+I'm running locally
+-------------------
+
+In this case the build command would be
+
+.. code-block:: bash
+
+    ./ML_Toolkit build Ollama_Test_Container
+
+This will download all the files needed from dockerhub then build the 
+container. Once this is complete we can start the Ollama server with:
+
+.. code-block:: bash
+
+    ./ML_Toolkit start Ollama_Test_Container
+
+you can them check everything is up and running by going to http://localhost:11434/
+in a web browser and, all being well, you should get a web page with the text 
+"Ollama is running".
+
+If this all looks good you can run the following
+
+.. code-block:: bash
+
+    ./ML_Toolkit run Ollama_Test_Container ollama run smollm2:135m
+
+This will download a tiny 135 million parameter model and start an interactive chat 
+session. Once you have finished your chat you can exit by typing /bye. From here 
+you can explore larger models or other features of Ollama by following the 
+official `Ollama documentation`_ . 
+
+.. _Ollama documentation: https://apptainer.org/docs/user/main/definition_files.html
+
+I'm running on Bede
+-------------------
+
+As previously mentioned getting things working on the GH100s via Bede requires 
+a bit more work.
+
+There are 3 main problems to overcome:
+
+1. We can't (or perhaps shouldn't) run Ollama interactively.
+2. We don't have GPU access on the login node.
+3. We don't have internet access on the compute nodes.
+
+Point 1 is easy enough to solve as we can inference the model via the python api. 
+To do this create a new file called ollama_test_chat.py.
+
+.. code-block:: python
+
+    from ollama import chat
+    from ollama import ChatResponse
+
+    #model = 'gemma3:latest'
+    model = 'smollm2:135m'
+    response: ChatResponse = chat(model=model, messages=[
+    {
+        'role': 'user',
+        'content': 'What is the air-speed velocity of an unladen swallow?',
+    },
+    ])
+
+    print(response.message.content)
+
+This will interface with Ollama, ask it a very important question, 
+then finally print the model's response.
+
+Now to address points two and three. In this case the order of 
+operations is important. 
+
+On the login node
+-----------------
+
+First we build the container as normal
+
+.. code-block:: bash
+
+    ./ML_Toolkit build Ollama_Test_Container
+
+Next we start the Ollama server
+
+.. code-block:: bash
+
+    ./ML_Toolkit start Ollama_Test_Container
+
+Now we need to run the Ollama pull command to download, but crucially not 
+run our model. In this case we'll use smollm2, a tiny model which is 
+useful for testing. 
+
+.. code-block:: bash
+
+    ./ML_Toolkit run Ollama_Test_Container ollama pull smollm2:135m
+
+Finally we need to shut the server down
+
+.. code-block:: bash
+
+    ./ML_Toolkit stop Ollama_Test_Container
+
+You will need to do this process for every model you wish to use. 
+Thus we recommend automating it with a bash script by copying the 
+following into a file called download_models.sh
+
+.. code-block:: bash
+
+    #!/bin/bash
+    #  start the Ollama server.
+    ./ML_Toolkit start Ollama_Test_Container
+    # download the model
+    ./ML_Toolkit run Ollama_Test_Container ollama pull $1
+    # stop the sever
+    ./ML_Toolkit stop Ollama_Test_Container
+
+Then to convert the file into a runnable script run the following command
+
+.. code-block:: bash
+
+    chmod +x download_models.sh
+
+Anytime you want a new model you can then run the script as:
+
+.. code-block:: bash
+
+    ./download_models.sh model_name:tag
+
+Where model_name is the model you want and tag is the specific version. 
+For example to download the latest version of gemma3 you would use:
+
+.. code-block:: bash
+
+    ./download_models.sh gemma3:latest
+
+On the compute node
+-------------------
+
+With that out of the way we can now finally get to running on the compute nodes.
+To do this we will need to create a Slurm script. To do this create the file 
+ollama_test.sh and enter the the following text.
+
+.. code-block:: bash
+
+    #!/bin/bash
+    # Example SLURM script for testing Ollama on Bede 
+    # with the ML_Toolkit
+    ##########################################
+    #SBATCH --account CHANGE_ME              # charge job to specified account
+    #SBATCH --cpus-per-task 1                # number of cpus required per task
+    #SBATCH --chdir /path/to/ML_Toolkit      # change working directory
+    #SBATCH --job-name ollama_test           # name of job
+    #SBATCH --ntasks 1                       # number of processes required
+    #SBATCH -o ollama_test.out               # File to redirect program output
+    #SBATCH -e ollama_test.err               # File to redirect any errors
+    #SBATCH --time 10                        # time limit (in mins)
+    #SBATCH --partition ghtest               # Choose either gh or ghtest
+    #SBATCH --gres gpu:1                     # Number of GPUs required for the job
+    ##########################################
+    # source the python virtual environment
+    source ML_Toolkit/bin/activate
+    #  start the Ollama server.
+    ./ML_Toolkit start Ollama_Test_Container
+    # inference the model via python script
+    ./ML_Toolkit run Ollama_Test_Container python ollama_test_chat.py
+    # stop the sever
+    ./ML_Toolkit stop Ollama_Test_Container
+
+This is an example script that allocates 1 cpu and 1 gpu for 10 minutes. 
+It then starts the Ollama server, runs the python script to inference 
+the model then finally, stops the server.
+
+Note: It will need updating with both the location of ML_Toolkit and your 
+account name.
+
+Then you can, finally, submit your job to the compute nodes with
+
+.. code-block:: bash
+
+    sbatch ollama_test.sh
+
+Once the has job has made it through the queue and been completed 
+by the compute node, all being well, you should see a new file
+ollama_test.out. This contains the response to your query from Ollama.
