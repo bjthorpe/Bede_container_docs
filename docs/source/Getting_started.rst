@@ -32,7 +32,7 @@ the python code using:
     cd Bede_containers
 
 Next you will need to install some python packages using pip. We recommend using a 
-`virtual environment`_ for this:
+virtual environment for this:
 
 .. code-block:: bash
 
