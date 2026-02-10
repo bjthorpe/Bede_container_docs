@@ -43,6 +43,7 @@ virtual environment for this:
 Optionally you can run the unit tests using:
 
 .. code-block:: bash
+
     pytest
 
 Getting our bearings
