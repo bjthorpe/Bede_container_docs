@@ -133,7 +133,7 @@ Once this is complete we can run a command inside this container using:
     ./ML_Toolkit run TestContainer COMMAND 
 
 Where COMMAND is the Linux command we wish the container to run. In our case we will run 
-the fortune command, to generate a random (possibly silly) quote then pass it into this 
+the fortune command, to generate a random (possibly silly) quote then pass it 
 into the cowsay command which will then display a message.
 
 .. code-block:: bash
