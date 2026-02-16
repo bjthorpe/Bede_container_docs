@@ -132,12 +132,13 @@ Once this is complete we can run a command inside this container using:
 
     ./ML_Toolkit run TestContainer COMMAND 
 
-Where COMMAND is the Linux command we wish the container to run. In our case this is 
-cowsay followed by a message to be displayed, enclosed with double quotes "".
+Where COMMAND is the Linux command we wish the container to run. In our case we will run 
+the fortune command, to generate a random (possibly silly) quote then pass it into this 
+into the cowsay command which will then display a message.
 
 .. code-block:: bash
 
-    ./ML_Toolkit run TestContainer cowsay "It works"
+    ./ML_Toolkit run TestContainer "fortune | cowsay"
 
 If all has gone to plan you should see similar output to the following:
 
@@ -155,14 +156,15 @@ If all has gone to plan you should see similar output to the following:
     *********************************************************************
     ***************** Running: TestContainer *********************
     *********************************************************************
-    __________
-    < It works>
-    ----------
-            \   ^__^
-            \   (oo)\_______
-                (__)\       )\/\
-                    ||----w |
-                    ||     ||
+    _________________________________________
+    / You will be reincarnated as a toad; and \
+    \ you will be much happier.               /
+     -----------------------------------------
+                \   ^__^
+                \   (oo)\_______
+                    (__)\       )\/\
+                        ||----w |
+                        ||     ||
 
 You will also find a more detailed output in the logfile logs/log.log. 
 This is overwritten each time you use the build or run command and 
