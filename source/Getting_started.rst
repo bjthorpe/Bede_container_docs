@@ -120,7 +120,7 @@ command (note this is case sensitive):
 
 .. code-block:: bash
 
-    ./ML_Toolkit build TestContainer
+    ml-toolkit build TestContainer
 
 This will download and build the cowsay container from the definition file and create a 
 container image TestContainer.sif in the Images directory. A container image contains 
@@ -130,7 +130,7 @@ Once this is complete we can run a command inside this container using:
 
 .. code-block:: bash
 
-    ./ML_Toolkit run TestContainer COMMAND 
+    ml-toolkit run TestContainer COMMAND 
 
 Where COMMAND is the Linux command we wish the container to run. In our case we will run 
 the fortune command, to generate a random (possibly silly) quote then pass it 
@@ -138,7 +138,7 @@ into the cowsay command which will then display a message.
 
 .. code-block:: bash
 
-    ./ML_Toolkit run TestContainer "fortune | cowsay"
+    ml-toolkit run TestContainer "fortune | cowsay"
 
 If all has gone to plan you should see similar output to the following:
 
@@ -191,7 +191,7 @@ In addition to build and run commands there are several other useful commands wh
 
 .. code-block:: bash
 
-    ./ML_Toolkit list
+    ml-toolkit list
 
 The full list however may mot be that useful as it's quite long. 
 As such the --group option may be used to filter down based on the group tag.
@@ -199,7 +199,7 @@ For example
 
 .. code-block:: bash
 
-    ./ML_Toolkit list --group Test
+    ml-toolkit list --group Test
 
 Will list only list containers with the tag Test.
 
@@ -223,7 +223,7 @@ using the -h or (--help) option as follows:
 
 .. code-block:: bash
 
-    ./ML_Toolkit -h
+    ml-toolkit -h
 
     usage: run_container.py [-h] [--config_file CONFIG_FILE] [--debug] {run,build,load,list,start,stop} ...
 
@@ -252,7 +252,7 @@ Many of these options also have there own sub options, for example run, these ca
 
 .. code-block:: bash
 
-    ./ML_Toolkit run -h
+    ml-toolkit run -h
 
     usage: run_container.py run [-h] model_name cmd [cmd ...]
 

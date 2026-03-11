@@ -85,9 +85,9 @@ This should be run with the ML_Toolkit toolkit as:
 .. code-block:: bash
 
     # This only needs to be done the first time
-    ./ML_Toolkit build MatterSim
+    ml-toolkit build MatterSim
     
-    ./ML_Toolkit run MatterSim python3 Examples/H2_MatterSim.py
+    ml-toolkit run MatterSim python3 Examples/H2_MatterSim.py
 
 From here you could do some further analysis with ASE or convert the data for use 
 with another tool. In our case we will move on to calculating charge density 

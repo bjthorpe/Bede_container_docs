@@ -56,7 +56,7 @@ Notes on debugging background containers
 ----------------------------------------
 when debugging containers that are running as background instances. That is
 containers running with :code:`apptainer instance start ...` or our wrapper
-:code:`./ML_toolkit start ...`.
+:code:`ml-toolkit start ...`.
 
 It may be useful to know Apptainer (unhelpfully) redirects all output and 
 errors from containers running as instances in the background to a log 

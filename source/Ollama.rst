@@ -303,14 +303,14 @@ In this case the build command would be
 
 .. code-block:: bash
 
-    ./ML_Toolkit build Ollama_Test_Container
+    ml-toolkit build Ollama_Test_Container
 
 This will download all the files needed from dockerhub then build the 
 container. Once this is complete we can start the Ollama server with:
 
 .. code-block:: bash
 
-    ./ML_Toolkit start Ollama_Test_Container
+    ml-toolkit start Ollama_Test_Container
 
 you can them check everything is up and running by going to http://localhost:11434/
 in a web browser and, all being well, you should get a web page with the text 
@@ -320,7 +320,7 @@ If this all looks good you can run the following
 
 .. code-block:: bash
 
-    ./ML_Toolkit run Ollama_Test_Container ollama run smollm2:135m
+    ml-toolkit run Ollama_Test_Container ollama run smollm2:135m
 
 This will download a tiny 135 million parameter model and start an interactive chat 
 session. Once you have finished your chat you can exit by typing /bye. From here 
@@ -373,13 +373,13 @@ First we build the container as normal
 
 .. code-block:: bash
 
-    ./ML_Toolkit build Ollama_Test_Container
+    ml-toolkit build Ollama_Test_Container
 
 Next we start the Ollama server
 
 .. code-block:: bash
 
-    ./ML_Toolkit start Ollama_Test_Container
+    ml-toolkit start Ollama_Test_Container
 
 Now we need to run the Ollama pull command to download, but crucially not 
 run our model. In this case we'll use smollm2, a tiny model which is 
@@ -387,13 +387,13 @@ useful for testing.
 
 .. code-block:: bash
 
-    ./ML_Toolkit run Ollama_Test_Container ollama pull smollm2:135m
+    ml-toolkit run Ollama_Test_Container ollama pull smollm2:135m
 
 Finally we need to shut the server down
 
 .. code-block:: bash
 
-    ./ML_Toolkit stop Ollama_Test_Container
+    ml-toolkit stop Ollama_Test_Container
 
 You will need to do this process for every model you wish to use. 
 Thus we recommend automating it with a bash script by copying the 
@@ -403,11 +403,11 @@ following into a file called download_models.sh
 
     #!/bin/bash
     #  start the Ollama server.
-    ./ML_Toolkit start Ollama_Test_Container
+    ml-toolkit start Ollama_Test_Container
     # download the model
-    ./ML_Toolkit run Ollama_Test_Container ollama pull $1
+    ml-toolkit run Ollama_Test_Container ollama pull $1
     # stop the sever
-    ./ML_Toolkit stop Ollama_Test_Container
+    ml-toolkit stop Ollama_Test_Container
 
 Then to convert the file into a runnable script run the following command
 
@@ -455,11 +455,11 @@ ollama_test.sh and enter the the following text.
     # source the python virtual environment
     source ML_Toolkit/bin/activate
     #  start the Ollama server.
-    ./ML_Toolkit start Ollama_Test_Container
+    ml-toolkit start Ollama_Test_Container
     # inference the model via python script
-    ./ML_Toolkit run Ollama_Test_Container python ollama_test_chat.py
+    ml-toolkit run Ollama_Test_Container python ollama_test_chat.py
     # stop the sever
-    ./ML_Toolkit stop Ollama_Test_Container
+    ml-toolkit stop Ollama_Test_Container
 
 This is an example script that allocates 1 cpu and 1 gpu for 10 minutes. 
 It then starts the Ollama server, runs the python script to inference 
