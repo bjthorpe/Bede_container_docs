@@ -3,7 +3,7 @@ Getting started
 
 Initial setup
 -------------
-The ML_toolkit was primarily built for use on 
+The ml-toolkit was primarily built for use on 
 the Grace-Hopper nodes of N8 HPC cluster Bede. You will
 first need to register for an account. Instructions for 
 this can be found in the `Bede Documentation.`_
@@ -23,8 +23,38 @@ this is the case).
 Bede Installation instructions
 ------------------------------
 
-Once you are logged into the Bede Grace-Hopper node you will need to obtain
-the python code using:
+Once you are logged into the Bede Grace-Hopper node you have two options you can either 
+install ml-toolkit for all users on the system using pipx or you can download the 
+python source files and build it from there.
+
+Using pipx (recommended for most users):
+----------------------------------------
+
+To install ml-toolit run the following commands:
+
+.. code-block:: bash
+
+    pipx install ml-toolkit
+    install_apptainer
+    install_ml-toolkit
+
+This will download and install all the necessary files to your system.
+it will also install apptainer if needed and create a directory called
+ML_Toolkit in your home directory.
+
+This is used to house all the various config, definition files and container 
+images used by ml-tookit. If you want to put this directory somewhere else 
+on your system you can use the -p option along with where you wish to 
+install it as:
+
+.. code-block:: bash
+
+    install_ml-toolkit -p /path/to/install/to
+
+Installing from source (recommended for developers/advanced users):
+-------------------------------------------------------------------
+
+You will first need to download the git repository code using:
 
 .. code-block:: bash
 
@@ -39,28 +69,59 @@ virtual environment for this:
     python3 -m venv ML_Toolkit
     source ML_Toolkit/bin/activate
     pip install dacite pyyaml pytest
+    pip install . 
 
-Optionally you can run the unit tests using:
+Finally you will need to run the two install scripts:
+
+.. code-block:: bash
+
+    install_apptainer
+    install_ml-toolkit
+
+Optionally you can now run the unit tests using:
 
 .. code-block:: bash
 
     pytest
 
-Getting our bearings
---------------------
+
+The ML_Toolkit directory
+------------------------
 
 The software we downloaded contains a number of different files 
 and folders so I think it is worthwhile briefly covering the 
 important files/folders and what each of them is used for.
 
-In order to use containers with the ML_Toolkit we need two things:
+All files used by ml-tookit are located in the ``ML_Toolkit`` directory
+which was created during installation and is located in the users 
+home directory by default.
+
+Note: if you ever need to know where this directory is located you can run:
+
+.. code-block:: bash
+
+    echo $ML_TOOLKIT_HOME
+
+Getting our bearings
+--------------------
+
+The ML_toolkit directory contains the following sub-directories:
+
+- **Container_Configs:** Contains all the .yaml config files used to configure the containers.
+- **Definitions:** Contains a number of .def files used to build containers.
+- **Examples:** Contains various python scripts to demonstrate how to use pre-trained models from MatBench Discovery
+- **Images:** Contains the container images (.sif) files used by Apptainer. These store all the data and files used by the container.
+- **Models:** Checkpoint Files used for the various pre-trained models.
+- **logs:** Log files containing more detailed output from the program, useful for debugging.
+
+In order to use containers with the ml-toolkit we need two things:
 
 1. A container config (.yaml) file
 2. A container definition
    
-Both of these combined will tell ML_Toolkit and Apptainer what software, files 
+Both of these combined will tell ml-toolkit and Apptainer what software, files 
 and steps are needed in order to build our container. We will go into more detail 
-about how these are constructed files in later sections. 
+about how these files are constructed  in later sections. 
 
 The Container_Configs directory holds a bunch of example config files most of which
 are for accessing for the various pre-trained models used for Machine learned atomic
@@ -76,22 +137,6 @@ Related to this is the Definitions directory this contains various Apptainer def
 setup the system and what software to install and are used by Apptainer to create the 
 various containers.
 
-The only other file that is relevant for now is ML_Toolkit which is the main script used 
-to run the software.
-
-Some important/useful directories are:
-
-- **Container_Configs:** Contains all the .yaml config files used to configure the containers.
-- **Definitions:** Contains a number of .def files used to build containers.
-- **Examples:** Contains various python scripts to demonstrate how to use pre-trained models from MatBench Discovery
-- **Images:** Contains the container images (.sif) files used by Apptainer. These store all the data and files used by the container.
-- **Models:** Checkpoint Files used for the various pre-trained models.
-- **logs:** Log files containing more detailed output from the program, useful for debugging.
-- **src:** The python source files used by the program
-- **tests:** Various files and scripts used by pytest for conducting unit tests.
-
-Anything else is just used for development and can be safely ignored for now.
-
 With this out of the way we shall now run a small test container to check everything 
 is working correctly.
 
@@ -105,7 +150,7 @@ ASCII art pictures of a cow with a message.
 
 .. _cowsay: https://cowsay.diamonds/
 
-An Apptainer defintion file to setup and run this container can be found under 
+An Apptainer definition file to setup and run this container can be found under 
 Definitions/cowsay.def. 
 
 These can be quite involved and a full tutorial on Apptainer is beyond the scope 
@@ -172,7 +217,7 @@ notably does not contain the output of the container itself. In this
 case the Ascii art cow. However it does contain useful information including:
 
 + what files/folders the container is accessing
-+ the variables used for each config ML_Toolkit has found
++ the variables used for each config ml-toolkit has found
 + a summary of the underlying Apptainer commands the script is running 
 + Warnings about config issues that won't necessarily crash the container but may cause issues. 
 

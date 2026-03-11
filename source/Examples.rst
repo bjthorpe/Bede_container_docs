@@ -8,8 +8,8 @@ Using MatBench Discovery Models
 `Matbench Discovery`_ is an interactive leaderboard which ranks 
 popular ML models for inter-atomic potentials. Definition 
 files for the top 20 models [1]_ can be found in the ``Images``
-directory. These are also all setup in a corresponding config file
-``Container_Configs/MatBench_Discovery.yaml`` such that you can 
+directory. These are also all setup with corresponding config files in
+``Container_Configs/MatBench_Discovery`` such that you can 
 simply refer to them by name.
 
 .. [1] At time of writing (Dec 2025)
@@ -20,7 +20,7 @@ one model, eSEN-30M-OAM, we first need to load the model with:
 
 .. code-block:: bash
 
-    ML_Toolkit load eSEN-30M-OAM
+    ml-toolkit load eSEN-30M-OAM
 
 This will download some files and create a Container image 
 ``eSEN-30M-OAM.sif`` in the ``Images`` directory. 
@@ -29,7 +29,7 @@ Note: this only needs to done the first time you use the model.
 Once this is complete we can run something in the container using:
 .. code-block:: bash
 
-    ML_Toolkit run eSEN-30M-OAM $COMMAND
+    ml-toolkit run eSEN-30M-OAM $COMMAND
 
 Where $COMMAND is the command you would like to run inside the container.
 
@@ -80,14 +80,15 @@ of a hydrogen molecule and using ASE and MatterSim:
     write('H2.xyz', h2)
     h2.get_potential_energy()
 
-This should be run with the ML_Toolkit toolkit as:
+This should be run with the ml-toolkit as:
 
 .. code-block:: bash
-
+    # change directory to to wherever ml-toolkit is installed
+    cd $ML_TOOLKIT_HOME
     # This only needs to be done the first time
     ml-toolkit build MatterSim
     
-    ml-toolkit run MatterSim python3 Examples/H2_MatterSim.py
+    ml-toolkit run MatterSim python3 scripts/Examples/H2_MatterSim.py
 
 From here you could do some further analysis with ASE or convert the data for use 
 with another tool. In our case we will move on to calculating charge density 

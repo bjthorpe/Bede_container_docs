@@ -1,7 +1,7 @@
 Defining Your Own Containers: DIY Large Language Model (llm)
 ============================================================
 
-ML_Toolkit is not just limited to the built in AI/ML models for atomic 
+ml-toolkit is not just limited to the built in AI/ML models for atomic 
 potentials. It can in principle be used for any software.
 So Lets try something a bit more interesting.
 We are going to create our own custom configuration for an llm based 
@@ -38,7 +38,7 @@ strictly required.
 If you are familiar with python programming you may have come across the .yaml format 
 before. However put simply it's a way of grouping related data together in a human readable 
 hierarchy. In our case we are using it to define basic information about our containers
-in a way that ML_Toolkit and Apptainer can understand.
+in a way that ml-toolkit and Apptainer can understand.
 
 Note: lines starting with a # symbol are known as comments. These lines are ignored by 
 the computer and are intended as notes to anyone who is reading the file.
@@ -57,7 +57,7 @@ and numbers ending with a colon. However, it cannot contain spaces or special ch
 It should also ideally be short and vaguely descriptive.
 
 As previously mentioned all lines beyond this point need to be indented. This tells
-ML_Toolkit that they are information related to "Ollama_Test_Container". They consist 
+ml-toolkit that they are information related to "Ollama_Test_Container". They consist 
 of a "field name" followed by a colon then the data related to that field. 
 
 Technically you can use be any number of spaces for the indentation (just not tabs) 
@@ -140,7 +140,7 @@ directory, Create a new file. Ollama.def that reads as follows:
 
     %environment
         # CHANGE THE NEXT LINE TO THE DIRECTORY YOU WISH TO STORE MODELS IN
-        export OLLAMA_MODELS="/CHANGE/ME"
+        export OLLAMA_MODELS="{{ toolkit_home }}/Models/ollama"
         export PATH="/envs/Ollama_env/bin:$PATH"
 
 The first two lines of this file tell Apptainer to start with the definition 
@@ -253,17 +253,19 @@ case this starts the ollama server.
 
     ...
 
-The final section %environment defines some variables used by ollama. In our case we
-need to **change line 17** to the directory you wish to store models in. We recommend
-using the Models directory within the ML_Toolkit installation.
+The final section %environment defines some variables used by ollama. In our case
+line 17 defines the directory in which ollama stores models. Here this is set up 
+to point to ML_Toolkit directory. The ``{{ toolkit_home }}`` 
+syntax is a special command to tell Apptainer to substitute in the the location 
+of the ML_Toolkit directory. Note you will need to **create the ``Models/ollama`` 
+sub-directories** if you do not already have them.
 
 .. code-block:: bash
 
     ...
     %environment
-    # CHANGE THE NEXT LINE TO THE DIRECTORY YOU WISH TO STORE MODELS IN
-    export OLLAMA_MODELS="/path/to/ML_Toolkit/Models/directory"
-    # Leave this line as is
+    # DIRECTORY YOU WISH TO STORE MODELS IN
+    export OLLAMA_MODELS="{{ toolkit_home }}/Models/ollama"
     export PATH="/envs/Ollama_env/bin:$PATH"
     ...
 
@@ -274,7 +276,7 @@ our purposes.
 .. _Documentation: https://apptainer.org/docs/user/main/definition_files.html
 
 With that we have just one final step, adding our new definition to the container config.
-Change the container_defintion line in ollama.yaml to the following: 
+Change the container_definition line in ollama.yaml to the following: 
 (remember there should be 4 spaces at the start of the line).
 
 .. code-block:: yaml
@@ -293,7 +295,7 @@ perform 4 steps:
 4. use the stop command to cleanup and stop the ollama server once we have finished
 
 Frustratingly however, due to how Bede is setup, the exact steps now vary 
-depending on if you have installed ML_toolkit locally or are using 
+depending on if you have installed ml-toolkit locally or are using 
 it on Bede.
 
 I'm running locally
@@ -439,11 +441,11 @@ ollama_test.sh and enter the the following text.
 
     #!/bin/bash
     # Example SLURM script for testing Ollama on Bede 
-    # with the ML_Toolkit
+    # with the ml-toolkit
     ##########################################
     #SBATCH --account CHANGE_ME              # charge job to specified account
     #SBATCH --cpus-per-task 1                # number of cpus required per task
-    #SBATCH --chdir /path/to/ML_Toolkit      # change working directory
+    #SBATCH --chdir /path/to/ml-toolkit      # change working directory
     #SBATCH --job-name ollama_test           # name of job
     #SBATCH --ntasks 1                       # number of processes required
     #SBATCH -o ollama_test.out               # File to redirect program output

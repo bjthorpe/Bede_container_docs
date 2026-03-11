@@ -22,7 +22,7 @@ The following are optional and all have sensible defaults.
 -   **image_file** (str): Path to the container image (.sif) file. If omitted this defaults to `Images/"ModelName".sif`.
 - **shared_directories** List[str]: List of extra directories to grant the Container access to. 
   By default Apptainer only grants containers access to the users home directory and the current working directory,
-  that is the directory that contains the ML_Toolkit script, [#]_. You can use this option to provide a list of the
+  that is the directory that contains the ml-toolkit script, [#]_. You can use this option to provide a list of the
   full paths to any other directories you wish to allow your container to access.
 
 Note:
