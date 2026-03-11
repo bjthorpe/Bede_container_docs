@@ -27,14 +27,18 @@ Once you are logged into the Bede Grace-Hopper node you have two options you can
 install ml-toolkit for all users on the system using pipx or you can download the 
 python source files and build it from there.
 
-Using pipx (recommended for most users):
+Using pip (recommended for most users):
 ----------------------------------------
 
 To install ml-toolit run the following commands:
 
 .. code-block:: bash
-
-    pipx install ml-toolkit
+    #create python virtual environment (recommended)
+    python -m venv ~/.venv/bede-ml-toolkit
+    source ~/.venv/bede-ml-toolkit/bin/activate
+    # install ml-toolkit
+    pip install bede-ml-toolkit
+    # if needed
     install_apptainer
     install_ml-toolkit
 
@@ -109,7 +113,7 @@ The ML_toolkit directory contains the following sub-directories:
 
 - **Container_Configs:** Contains all the .yaml config files used to configure the containers.
 - **Definitions:** Contains a number of .def files used to build containers.
-- **Examples:** Contains various python scripts to demonstrate how to use pre-trained models from MatBench Discovery
+- **Scripts:** Contains various python scripts to demonstrate how to use pre-trained models from MatBench Discovery
 - **Images:** Contains the container images (.sif) files used by Apptainer. These store all the data and files used by the container.
 - **Models:** Checkpoint Files used for the various pre-trained models.
 - **logs:** Log files containing more detailed output from the program, useful for debugging.
