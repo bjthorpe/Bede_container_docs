@@ -33,6 +33,7 @@ Using pip (recommended for most users):
 To install bede_ml-toolit run the following commands:
 
 .. code-block:: bash
+    
     #create python virtual environment (recommended)
     python -m venv ~/.venv/bede-ml-toolkit
     source ~/.venv/bede_ml-toolkit/bin/activate
