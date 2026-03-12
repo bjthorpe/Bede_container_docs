@@ -95,7 +95,7 @@ with another tool. In our case we will move on to calculating charge density
 using CASTEP.
 
 Interfacing with Castep
-***********************
+-----------------------
 
 CASTEP can use an external routine to perform energy, force and stress calculations 
 using ML models in two distinct ways:
@@ -103,8 +103,11 @@ using ML models in two distinct ways:
 1. The "File" method
 2. The "Server" method
 
+At this stage users should note that both of these methods are **still considered experimental**. 
+As such they use a **developer keyword**. The current plan is to release them as an **official keyword in CASTEP 27**.
+
 The File Method
----------------
+***************
 
 Conceptually, this is the simplest approach. Whenever CASTEP need to update the energy,
 forces, and stresses it writes the current geometry to a .cell file. It then calls an 
@@ -112,5 +115,49 @@ external process. This process reads in the .cell file evaluate the energy, forc
 and stress, writing the results to a .geom file. CASTEP then reads in this .geom file 
 and carries on it merry way.
 
-Whilst simple this approach has a non-trivial overhead and likely will not scale well 
-to more than a few mpi-processes so it is only really useful for small scale testing.
+We note that Whilst it's simple, this approach has a non-trivial overhead and likely 
+will not scale well to more than a few mpi-processes. As such it is only really recommended 
+for small scale testing. It is however the **only option available** if you are using 
+**CASTEP version 25 or older**.
+
+The Server Method
+*****************
+
+The method is **new to CASTEP V26** (the latest version at the time of writing). It involves
+running a stand-alone application which both: evaluates the energy, force and stress; and 
+acts as a network server. CASTEP can then talk to this application over the network and 
+request updated values for energy, force and stress as needed. 
+
+This is more a bit more complex to setup but has three major advantages:
+
+1. You can run multiple servers at once allowing you to easily scale over many mpi mpi-processes. 
+2. I uses the network for communication so the overhead will be minimal.
+3. It's more robust, the server and CASTEP are completely independent. As such if one or the other 
+   encounters a problem and crashes they can easily be restarted and start back from an earlier 
+   point in time.
+
+CASTEP Examples
+---------------
+
+We assume users already have some familiarity with CASTEP. Thus we will not be covering the 
+basics of how to use it, or any of the theory behind these calculations. If you need this 
+CASTEP already has `extensive documentation`_ and we will adapting several of the tutorial 
+examples to work with ML potentials.
+
+
+**Note to Kit and Scott:** I have compiled a version of CASTEP 26 on Bede for testing using the nvidia compiler 
+with both serial and OpenMPI. Also it is the latest GPU branch so if you really want to recompile 
+go for it. However, I kept it CPU only as I did not want the additional complications with OpenACC.
+
+It's under `/projects/bdyrk04/castep26` you will need to load nvhpc/24.1 and openmpi/4.1.6.
+You can ignore the system version of OpenBLAS and fftw, as for whatever reason they are only available for gcc. NVHPC 
+uses its own blas but only provides cufft which is GPU only so I complied my own fftw under `/projects/bdyrk04/libs/lib`.
+
+Charge density of Si lattice (file method)
+******************************************
+
+Bandstructure of Graphene (server method)
+*****************************************
+
+Si GA (server method)
+*********************
