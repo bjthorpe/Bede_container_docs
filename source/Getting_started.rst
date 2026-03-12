@@ -3,7 +3,7 @@ Getting started
 
 Initial setup
 -------------
-The ml-toolkit was primarily built for use on 
+The bede_ml-toolkit was primarily built for use on 
 the Grace-Hopper nodes of N8 HPC cluster Bede. You will
 first need to register for an account. Instructions for 
 this can be found in the `Bede Documentation.`_
@@ -24,23 +24,23 @@ Bede Installation instructions
 ------------------------------
 
 Once you are logged into the Bede Grace-Hopper node you have two options you can either 
-install ml-toolkit for all users on the system using pipx or you can download the 
+install bede_ml-toolkit for all users on the system using pipx or you can download the 
 python source files and build it from there.
 
 Using pip (recommended for most users):
 ----------------------------------------
 
-To install ml-toolit run the following commands:
+To install bede_ml-toolit run the following commands:
 
 .. code-block:: bash
     #create python virtual environment (recommended)
     python -m venv ~/.venv/bede-ml-toolkit
-    source ~/.venv/bede-ml-toolkit/bin/activate
-    # install ml-toolkit
+    source ~/.venv/bede_ml-toolkit/bin/activate
+    # install bede_ml-toolkit
     pip install bede-ml-toolkit
     # if needed
     install_apptainer
-    install_ml-toolkit
+    install_bede_ml-toolkit
 
 This will download and install all the necessary files to your system.
 it will also install apptainer if needed and create a directory called
@@ -53,7 +53,7 @@ install it as:
 
 .. code-block:: bash
 
-    install_ml-toolkit -p /path/to/install/to
+    install_bede_ml-toolkit -p /path/to/install/to
 
 Installing from source (recommended for developers/advanced users):
 -------------------------------------------------------------------
@@ -62,7 +62,8 @@ You will first need to download the git repository code using:
 
 .. code-block:: bash
 
-    git clone https://github.com/bjthorpe/Bede_containers
+    git clone https://github.com/bjthorpe/Bede_containersg
+    git checkout dev
     cd Bede_containers
 
 Next you will need to install some python packages using pip. We recommend using a 
@@ -70,8 +71,8 @@ virtual environment for this:
 
 .. code-block:: bash
 
-    python3 -m venv ML_Toolkit
-    source ML_Toolkit/bin/activate
+    python3 -m venv bede_ml-toolkit
+    source bede_ml-toolkit/bin/activate
     pip install dacite pyyaml pytest
     pip install . 
 
@@ -80,7 +81,7 @@ Finally you will need to run the two install scripts:
 .. code-block:: bash
 
     install_apptainer
-    install_ml-toolkit
+    install_bede_ml-toolkit
 
 Optionally you can now run the unit tests using:
 
@@ -96,7 +97,7 @@ The software we downloaded contains a number of different files
 and folders so I think it is worthwhile briefly covering the 
 important files/folders and what each of them is used for.
 
-All files used by ml-tookit are located in the ``ML_Toolkit`` directory
+All files used by bede_ml-tookit are located in the ``ML_Toolkit`` directory
 which was created during installation and is located in the users 
 home directory by default.
 
@@ -118,12 +119,12 @@ The ML_toolkit directory contains the following sub-directories:
 - **Models:** Checkpoint Files used for the various pre-trained models.
 - **logs:** Log files containing more detailed output from the program, useful for debugging.
 
-In order to use containers with the ml-toolkit we need two things:
+In order to use containers with the bede_ml-toolkit we need two things:
 
 1. A container config (.yaml) file
 2. A container definition
    
-Both of these combined will tell ml-toolkit and Apptainer what software, files 
+Both of these combined will tell bede_ml-toolkit and Apptainer what software, files 
 and steps are needed in order to build our container. We will go into more detail 
 about how these files are constructed  in later sections. 
 
@@ -221,7 +222,7 @@ notably does not contain the output of the container itself. In this
 case the Ascii art cow. However it does contain useful information including:
 
 + what files/folders the container is accessing
-+ the variables used for each config ml-toolkit has found
++ the variables used for each config bede_ml-toolkit has found
 + a summary of the underlying Apptainer commands the script is running 
 + Warnings about config issues that won't necessarily crash the container but may cause issues. 
 
@@ -258,6 +259,7 @@ containers as background processes which is useful for certain types of software
 The **Start** command runs the command defined in the definition (.def) file 
 under the section `%startscript`_. You can also list all currently running containers 
 with:
+
 .. code-block:: bash
 
     apptainer instance list.

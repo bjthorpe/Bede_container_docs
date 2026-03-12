@@ -21,9 +21,10 @@ The following are optional and all have sensible defaults.
 
 -   **image_file** (str): Path to the container image (.sif) file. If omitted this defaults to `Images/"ModelName".sif`.
 - **shared_directories** List[str]: List of extra directories to grant the Container access to. 
-  By default Apptainer only grants containers access to the users home directory and the current working directory,
-  that is the directory that contains the ml-toolkit script, [#]_. You can use this option to provide a list of the
-  full paths to any other directories you wish to allow your container to access.
+  By default Apptainer only grants containers access to the users home directory, the current working directory,
+  and the ML_Toolkit directory[#]_. 
+  You can use this option to provide a list of the full paths to any other directories you wish to allow your 
+  container to access.
 
 Note:
 
@@ -38,7 +39,7 @@ Note:
 - **build_options** dict: Dictionary of key-value pairs to pass though to the Apptainer build script 
   to replace `{{ variable }}` entries in build definition (.def) files. [#]_
 
-.. [#] Apptainer also grants containers access to a few select system directories. see `the docs for more details`_
+.. [#] Apptainer also grants containers access to a few other select system directories. see `the docs for more details`_
 .. [#] These can be very useful by allowing you to use a single definition file to build multiple similar containers. See the 
   `Apptainer build docs`_ for more information.
 

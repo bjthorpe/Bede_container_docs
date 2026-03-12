@@ -80,10 +80,10 @@ of a hydrogen molecule and using ASE and MatterSim:
     write('H2.xyz', h2)
     h2.get_potential_energy()
 
-This should be run with the ml-toolkit as:
+This should be run with the bede_ml-toolkit as:
 
 .. code-block:: bash
-    # change directory to to wherever ml-toolkit is installed
+    # change directory to to wherever bede_ml-toolkit is installed
     cd $ML_TOOLKIT_HOME
     # This only needs to be done the first time
     ml-toolkit build MatterSim
@@ -97,4 +97,20 @@ using CASTEP.
 Interfacing with Castep
 ***********************
 
-WRITE ME!!!
+CASTEP can use an external routine to perform energy, force and stress calculations 
+using ML models in two distinct ways:
+
+1. The "File" method
+2. The "Server" method
+
+The File Method
+---------------
+
+Conceptually, this is the simplest approach. Whenever CASTEP need to update the energy,
+forces, and stresses it writes the current geometry to a .cell file. It then calls an 
+external process. This process reads in the .cell file evaluate the energy, force 
+and stress, writing the results to a .geom file. CASTEP then reads in this .geom file 
+and carries on it merry way.
+
+Whilst simple this approach has a non-trivial overhead and likely will not scale well 
+to more than a few mpi-processes so it is only really useful for small scale testing.

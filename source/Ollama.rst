@@ -1,7 +1,7 @@
 Defining Your Own Containers: DIY Large Language Model (llm)
 ============================================================
 
-ml-toolkit is not just limited to the built in AI/ML models for atomic 
+bede_ml-toolkit is not just limited to the built in AI/ML models for atomic 
 potentials. It can in principle be used for any software.
 So Lets try something a bit more interesting.
 We are going to create our own custom configuration for an llm based 
@@ -38,7 +38,7 @@ strictly required.
 If you are familiar with python programming you may have come across the .yaml format 
 before. However put simply it's a way of grouping related data together in a human readable 
 hierarchy. In our case we are using it to define basic information about our containers
-in a way that ml-toolkit and Apptainer can understand.
+in a way that bede_ml-toolkit and Apptainer can understand.
 
 Note: lines starting with a # symbol are known as comments. These lines are ignored by 
 the computer and are intended as notes to anyone who is reading the file.
@@ -57,7 +57,7 @@ and numbers ending with a colon. However, it cannot contain spaces or special ch
 It should also ideally be short and vaguely descriptive.
 
 As previously mentioned all lines beyond this point need to be indented. This tells
-ml-toolkit that they are information related to "Ollama_Test_Container". They consist 
+bede_ml-toolkit that they are information related to "Ollama_Test_Container". They consist 
 of a "field name" followed by a colon then the data related to that field. 
 
 Technically you can use be any number of spaces for the indentation (just not tabs) 
@@ -295,7 +295,7 @@ perform 4 steps:
 4. use the stop command to cleanup and stop the ollama server once we have finished
 
 Frustratingly however, due to how Bede is setup, the exact steps now vary 
-depending on if you have installed ml-toolkit locally or are using 
+depending on if you have installed bede_ml-toolkit locally or are using 
 it on Bede.
 
 I'm running locally
@@ -441,11 +441,10 @@ ollama_test.sh and enter the the following text.
 
     #!/bin/bash
     # Example SLURM script for testing Ollama on Bede 
-    # with the ml-toolkit
+    # with the bede_ml-toolkit
     ##########################################
     #SBATCH --account CHANGE_ME              # charge job to specified account
     #SBATCH --cpus-per-task 1                # number of cpus required per task
-    #SBATCH --chdir /path/to/ml-toolkit      # change working directory
     #SBATCH --job-name ollama_test           # name of job
     #SBATCH --ntasks 1                       # number of processes required
     #SBATCH -o ollama_test.out               # File to redirect program output
@@ -455,7 +454,7 @@ ollama_test.sh and enter the the following text.
     #SBATCH --gres gpu:1                     # Number of GPUs required for the job
     ##########################################
     # source the python virtual environment
-    source ML_Toolkit/bin/activate
+    source bede_ml-toolkit/bin/activate
     #  start the Ollama server.
     ml-toolkit start Ollama_Test_Container
     # inference the model via python script
@@ -467,8 +466,7 @@ This is an example script that allocates 1 cpu and 1 gpu for 10 minutes.
 It then starts the Ollama server, runs the python script to inference 
 the model then finally, stops the server.
 
-Note: It will need updating with both the location of ML_Toolkit and your 
-account name.
+Note: It will need updating with your account name.
 
 Then you can, finally, submit your job to the compute nodes with
 
