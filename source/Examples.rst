@@ -34,11 +34,56 @@ Once this is complete we can run something in the container using:
 
 Where $COMMAND is the command you would like to run inside the container.
 
-In this example we will predict the atomic potential of a hydrogen 
-molecule then use this to calculate the charge density.
+A brief note on using Models from MetaAi:
+*****************************************
+
+Unfortunately, due to MetaAi's licencing terms you need both a Huggingface account and an API key to be able to download model
+checkpoints for use with bede_ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
+
+Thus if you attempt to build/use any of the models tagged MetaAi. that is any of the following:
+
+- eqV2-L-DeNS
+- eqV2-M-DeNS
+- eqV2-S-DeNS
+- eqV2-S
+- eSEN-30M-MP
+- eSEN-30M-OAM
+- eqV2-S-OAM
+- eqV2-M-OAM
+- eqV2_M
+- eqV2-L-OAM
+- eSEN-30M-OMat
+- eqV2-S-OMat
+- eqV2-M-OMat
+- eqV2-L-OMat
+- omat24
+- uma-s-1
+- uma-s-1p1
+- uma-m-1p1
+- uma
+  
+you will likely be greeted with an error similar to the following:
+
+.. code-block::
+
+    ********************************************************************************
+    ************************** Loading Model Config Files***************************
+    ********************************************************************************
+                            All config files look good                           
+    ********************************************************************************
+    *** You have asked for a model that requires a HuggingFace API key to build.****
+    **** This needs to be provided in: /home/ben/ML_Toolkit/API_Keys/HF_AUTH.key****
+    ************************* See the docs for more details*************************
+
+In which case you will need to do some manual setup by following the instructions 
+under `Accessing Models from MetaAi`_
 
 Using the Atomic Simulation Environment
 ***************************************
+
+In this next example we will predict the atomic potential of a simple hydrogen 
+molecule.
+
 The vast majority of Models listed on Matbench Discovery 
 can be used through python via the Atomic Simulation 
 Environment (`ASE`_).
@@ -50,7 +95,7 @@ we simply need to setup an ASE calculator then use the
 ``get_potential_energy()`` method. The problem, however,is 
 every model uses it's own calculator with there own setup steps.
 
-To make things easier in the Examples directory we have provided a 
+To make things easier in the Scripts directory we have provided a 
 python function ``initialise_model()`` that takes in a string that
 is the name of the model you wish to use and returns an appropriate
 ASE calculator for that particular ML model.
@@ -84,6 +129,7 @@ of a hydrogen molecule and using ASE and MatterSim:
 This should be run with the bede_ml-toolkit as:
 
 .. code-block:: bash
+
     # change directory to to wherever bede_ml-toolkit is installed
     cd $ML_TOOLKIT_HOME
     # This only needs to be done the first time
@@ -95,7 +141,7 @@ From here you could do some further analysis with ASE or convert the data for us
 with another tool. In our case we will move on to calculating charge density 
 using CASTEP.
 
-Interfacing with Castep
+Interfacing with CASTEP
 -----------------------
 
 CASTEP can use an external routine to perform energy, force and stress calculations 
@@ -140,25 +186,342 @@ This is more a bit more complex to setup but has three major advantages:
 CASTEP Examples
 ---------------
 
-We assume users already have some familiarity with CASTEP. Thus we will not be covering the 
-basics of how to use it, or any of the theory behind these calculations. If you need this 
-CASTEP already has `extensive documentation`_ and we will adapting several of the tutorial 
-examples to work with ML potentials.
+Please note this is not an extensive tutorial for CASTEP. We assume users already have some 
+familiarity with CASTEP. Thus we will not be covering the basics of how to use it, or any of
+the theory behind these calculations.
 
+If you need this CASTEP already has `extensive documentation`_ and we will adapting several of the tutorial 
+examples to work with ML potentials. For users on Bede there is (or will be) a module 
+containing copy CASTEP 26 available as ``module load castep``. For anyone else you will need 
+to `install a recent version of CASTEP`_ (preferably V25 or above).
 
-**Note to Kit and Scott:** I have compiled a version of CASTEP 26 on Bede for testing using the nvidia compiler 
-with both serial and OpenMPI. Also it is the latest GPU branch so if you really want to recompile 
-go for it. However, I kept it CPU only as I did not want the additional complications with OpenACC.
+.. _install a recent version of CASTEP: https://www.castep.org/get_castep
+.. _extensive documentation: https://castep-docs.github.io/castep-docs/
 
-It's under `/projects/bdyrk04/castep26` you will need to load nvhpc/24.1 and openmpi/4.1.6.
-You can ignore the system version of OpenBLAS and fftw, as for whatever reason they are only available for gcc. NVHPC 
-uses its own blas but only provides cufft which is GPU only so I complied my own fftw under `/projects/bdyrk04/libs/lib`.
+A Note to Kit and Scott:
+************************
+
+I have compiled a version of CASTEP 26 on Bede for testing using the nvidia compiler 
+with both serial and OpenMPI. Note I had serious issues getting this working. CASTEP itself definitely now works. 
+However, Some of the utilities and analysis tools (optados, cif2cell, xmgrace ect..) would not compile 
+properly with ARM64 Thus they may or may not be available. As such i suggest you copy the CASTEP output off 
+bede and do any analysis ect locally.
+
+Also it is the latest GPU branch so if you really want to use GPU I can easily recompile it. However, I kept it CPU only 
+for the time being as I did not want the additional complications with OpenACC.
+
+It's under ``/projects/bdyrk04/castep26`` you will need to ``module load nvhpc/24.1`` and ``openmpi/4.1.6``.
+You can ignore the system version of OpenBLAS and fftw, as for whatever reason they are only available for gcc. 
+NVHPC uses its own blas but only provides cufft which is GPU only. So I complied my own version of fftw under 
+``/projects/bdyrk04/libs/lib``.
 
 Charge density of Si lattice (file method)
 ******************************************
 
+We will start with a simple calculation used in the CASTEP `charge density tutorial_`. It consists of 
+a Si lattice made from a 3 atom unit cell. The CASTEP .cell file should be as follows:
+
+.. code-block::
+
+    %block lattice_abc
+    3.8 3.8 3.8
+    60 60 60
+    %endblock lattice_abc
+    !
+    ! Atomic co-ordinates for each species.
+    ! These are in fractional co-ordinates wrt to the cell.
+    !
+    %block positions_frac
+    Si 0.00 0.00 0.00
+    Si 0.25 0.25 0.25
+    %endblock positions_frac
+    !
+    ! Analyse structure to determine symmetry
+    !
+    symmetry_generate
+    !
+    ! Specify M-P grid dimensions for electron wave-vectors (K-points)
+    !
+    kpoint_mp_grid 4 4 4
+
+and the .param file:
+
+.. code-block::
+
+    xc_functional : LDA
+    cutoff_energy : 1500 eV
+    #this next line causes the charge to be written in a den_fmt file
+    write_formatted_density : T  
+    spin_polarised : false
+
+Before using any ML models we recommend running this as is to get the ``silicon.den_fmt`` to compare against. 
+We also recommand renaming this to file to make comparisons easier.
+
+Users on bede will want to create a slurm script ``test_castep.sh`` to run on the compute nodes using the following template:
+
+.. code-block:: bash
+
+    #!/bin/bash
+    # Example SLURM script for CASTEP 
+    # with the bede_ml-toolkit
+    ##########################################
+    #SBATCH --account CHANGE_ME              # charge job to specified account
+    #SBATCH --cpus-per-task 1                # number of cpus required per task
+    #SBATCH --job-name castep_test           # name of job
+    #SBATCH --ntasks 1                       # number of processes required
+    #SBATCH -o castep_test.out               # File to redirect program output
+    #SBATCH -e castep_test.err               # File to redirect any errors
+    #SBATCH --time 10                        # time limit (in mins)
+    #SBATCH --partition ghtest               # Choose either gh or ghtest
+    #SBATCH --gres gpu:1                     # Number of GPUs required for the job
+    ##########################################
+    # source the python virtual environment
+    source ~/.venv/bede_ml-toolkit/bin/activate
+    module load castep
+    # change directory to where Si.param and Si.cell are located
+    cd /location/of/si.param
+    castep.serial Si
+
+you can then submit the batch script with
+
+.. code-block:: bash
+
+    sbatch castep_test.sh
+
+Users on there own machines can just run CASTEP as you normally would.
+
+Modification to work with ML Potentials
+*****************************************
+
+To modify this to work with an ML potential we you first we need to ensure you have activated your python virtual 
+env if you have not already done so. [#]_ In the Scripts directory for ML_toolkit you will find two files: 
+predict.sh and ML_file.py these will be used by CASTEP to call bede_ML-toolkit at the appropriate time 
+and tell it which model to use.
+
+Next we need to modify the param file by adding the following devel_code block to the end of the Si.param file.
+
+.. code-block:: 
+
+    %block devel_code
+
+    PP=T
+
+    PP:
+
+        # Run external script method
+        EXT=T
+
+        # Don't delete extra files generated for communication with external script
+        EXT_CLEANUP=F
+
+        # Command used to call the external script used to predict energy/stress/forces
+        EXTCALL: ${ML_TOOLKIT_HOME}/Scripts/predict.sh MatterSim :ENDEXTCALL
+
+    ENDPP:
+
+    %endblock devel_code
+
+This uses the pair-potential (PP) devel_code to tell CASTEP to get energy, stress and forces using 
+an external script. The line ``EXT=T`` tells CASTEP to call an external command. ``EXT_CLEANUP=F`` 
+tells it not cleanup the extra files at the end. You may wish to set this to true for larger runs 
+to avoid clogging up the file system. 
+
+The final line of interest is ``EXTCALL: ${ML_TOOLKIT_HOME}/Scripts/predict.sh MatterSim :ENDEXTCALL`` 
+This defines the command run by CASTEP each time it needs the energy, stress and forces. In this case
+it uses predict.sh in the ``ML_Toolkit/Scripts`` directory. You will also notice this defines which model to 
+use. This can be any model you like, for this example we have chosen MatterSim.
+
+Before running CASTEP we next need to ensure we have built an appropriate container for our ML model. 
+As previously discussed we have chosen MatterSim for this example.
+
+.. code-block:: bash
+
+    ml-toolkit build MatterSim
+
+Once this is complete we can run CASTEP as we did previously.
+
+At this point you can compare the charge density to the original using Vesta as per the original tutorial. 
+For users on Bede you will need to copy the files to your local machine and do the analysis there as 
+Vesta is not available.
+
+.. _charge density tutorial: https://castep-docs.github.io/castep-docs/tutorials/Bonding_and_Charge/charge_density/
+.. [#] You can easily tell if your python virtual env is active if you can see (bede_ml-toolkit) in your terminal. If not you need to run ``source ~/.venv/bede_ml-toolkit/bin/activate``
+
 Bandstructure of Graphene (server method)
 *****************************************
+
+Next we'll try something a bit more interesting the following .cell and .param files setup a calculation of the Bandstructure
+for a 1D Hexagonal lattice of carbon atoms, a.k.a  Graphene.
+
+.. code-block::
+
+    #Graphene.param
+    task : spectral  !bandstructure
+    spectral_task : bandstructure
+
+    # Exchange correlation
+    xc_functional : PBE
+
+    # Plane wave cutoff
+    cut_off_energy : 500 eV
+
+    # SCF settings
+    max_scf_cycles : 100
+    elec_energy_tol : 1e-6
+
+    # Smearing (graphene is semi-metal)
+    smearing_width : 0.1 eV
+    smearing_scheme : gaussian
+
+    # Diagonalization
+    mixing_scheme : Pulay
+    mix_charge_amp : 0.5
+
+    # Output options
+    write_bands : true
+    write_orbitals : false
+
+    # Geometry
+    spin_polarized : false
+
+.. code-block::
+
+    # Graphine.cell
+    %BLOCK LATTICE_CART
+    ang
+    2.460000  0.000000  0.000000
+    -1.230000  2.130422  0.000000
+    0.000000  0.000000 15.000000
+    %ENDBLOCK LATTICE_CART
+
+
+    %BLOCK POSITIONS_FRAC
+    C 0.000000 0.000000 0.000000
+    C 0.333333 0.666667 0.000000
+    %ENDBLOCK POSITIONS_FRAC
+
+
+    KPOINT_MP_GRID 12 12 1
+    KPOINT_MP_OFFSET 0 0 0
+
+
+    # High symmetry path for graphene band structure
+    %BLOCK SPECTRAL_KPOINT_PATH
+    0.0  0.0  0.0   ! Gamma
+    0.333333 0.333333 0.0   ! K
+    0.5  0.0  0.0   ! M
+    0.0  0.0  0.0   ! Gamma
+    %ENDBLOCK SPECTRAL_KPOINT_PATH
+
+
+    SPECTRAL_KPOINT_PATH_SPACING 0.02
+
+After running this with CASTEP and plotting the resulting graphene.bands output file you should get output similar to the following:
+
+.. figure:: images/graphene_bands.png
+    :alt: example bandstructure for Graphene produced by CASTEP
+    :width: 800
+    :align: center
+
+    example bandstructure for Graphene produced by CASTEP. Note: we used the dispersion.pl plotting 
+    script with the -sym=hexagonal parameter to get the correct labels for the path though the 
+    brillouin zone.
+    
+We will now modify the .parm file to tell CASTEP to get potentials, forces and stresses from an external 
+server by adding a devel_code block to the .param file.
+
+Note: **the server method will only work for CASTEP version 26** users of older versions of CASTEP will need to 
+either use the previously mentioned file method or upgrade to version 26.
+
+.. code-block::
+
+    # required for socket interface
+    socket_port 5000 
+    socket_host 127.0.0.1
+
+    %BLOCK devel_code
+    PP=T
+    PP:
+        SOC=T
+    :ENDPP
+    %ENDBLOCK devel_code
+
+Once again, we are using the Pair-potential (PP) devel_code. However, first we use the ``socket_port`` and ``socket_host`` keywords 
+to tell CASTEP where to find the external server on the network. In this case ``socket_port 5000``  tells CASTEP to listen on 
+network port 5000 [#]_. ``socket_host 127.0.0.1`` tell CASTEP the ip address [#]_ of the server on the local machine.
+
+The remaining lines inside the devel_code block simply enables the PP devel_code and tells CASTEP to get potentials, forces and stresses
+ from an external process on the network.
+
+Once the param file has been modified we next need to build a container with the bede_ml-toolkit. In this example we will use 
+one of the MetaAi Omat24 models eSEN-30M-OAM [#]_
+
+.. code-block:: bash
+
+    ml-toolkit build eSEN-30M-OAM
+
+Once this is complete if you are on Bede you can use the following bash script as a template:
+
+.. code-block:: bash
+
+    #!/bin/bash
+    # Example SLURM script for CASTEP 
+    # with the bede_ml-toolkit
+    ##########################################
+    #SBATCH --account CHANGE_ME              # charge job to specified account
+    #SBATCH --cpus-per-task 1                # number of cpus required per task
+    #SBATCH --job-name castep_test           # name of job
+    #SBATCH --ntasks 1                       # number of processes required
+    #SBATCH -o castep_test.out               # File to redirect program output
+    #SBATCH -e castep_test.err               # File to redirect any errors
+    #SBATCH --time 10                        # time limit (in mins)
+    #SBATCH --partition ghtest               # Choose either gh or ghtest
+    #SBATCH --gres gpu:1                     # Number of GPUs required for the job
+    ##########################################
+    # source the python virtual environment
+    source ~/.venv/bede_ml-toolkit/bin/activate
+    module load castep
+    # change directory to where Graphene.param and Graphene.cell are located
+    cd /location/of/graphene.param
+    ml-toolkit start eSEN-30M-OAM
+    # waith for a few seconds as the server needs time to actually start up
+    sleep 5
+    castep.serial Graphene
+    ml-toolkit stop eSEN-30M-OAM
+
+or if running you are running locally you can just run the following to start ml-toolit as a server in the background. 
+Then run CASETP and finally shut down the server. Note: you may need to use the ``sleep`` command to wait 
+for a few seconds between starting the server and CASTEP as the server can take a short while to actually 
+start-up. 
+
+.. code-block:: bash
+
+    # change directory to where Graphene.param and Graphene.cell are located
+    cd /location/of/graphene.param
+    ml-toolkit start eSEN-30M-OAM
+    # wait for a few seconds as the server needs time to actually start-up
+    sleep 5
+    castep.serial Graphene
+    ml-toolkit stop eSEN-30M-OAM
+
+Once complete you should get a ``Graphene.bands`` file which should produce a bandstructure plot similar to the following:
+
+.. figure:: images/graphene_bands_ML.png
+    :alt: example bandstructure for Graphene produced by CASTEP using the eSEN-30M-OAM model for potential, forces and stresses.
+    :width: 800
+    :align: center
+
+    example bandstructure for Graphene produced by CASTEP. using the eSEN-30M-OAM model for potential,
+    forces and stresses.
+    
+    Note: we used the dispersion.pl plotting script with the -sym=hexagonal parameter to get the 
+    correct labels for the path though the brillouin zone.
+
+.. [#] For reference a network port is simply a number between 0 and 65535 that points to a location on the network used for communication between programs. See `this site`_ for more information.
+.. [#] An I.p address is a number used in networking to identify different computers on the network. In our case we are using 127.0.0.1 which is a special number that the computer uses to refer to itself.
+.. [#] Once again if you want to use Models from MetaAi you will need to do some manual setup outlined in `Accessing Models from MetaAi`_ otherwise you will need to use different model.
+.. _this site: https://www.geeksforgeeks.org/computer-networks/what-is-ports-in-networking/
+
 
 Si GA (server method)
 *********************
