@@ -1,5 +1,7 @@
-Defining Your Own Containers: DIY Large Language Model (llm)
-============================================================
+Defining Your Own Containers 
+============================
+DIY Large Language Model (llm)
+******************************
 
 bede_ml-toolkit is not just limited to the built in AI/ML models for atomic 
 potentials. It can in principle be used for any software.

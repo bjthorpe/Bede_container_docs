@@ -11,7 +11,7 @@ Introduction:
 bede_ml-toolkit is a python script designed to make working with ML/AI models 
 simpler and easier on the Bede grace hopper nodes by using containers. 
 
-These docs apply to version 0.9 (tagged as V0.9 on github) 
+These docs apply to version 1.0.2 (tagged as V1.0.2 on github) 
 
 Containers
 ----------

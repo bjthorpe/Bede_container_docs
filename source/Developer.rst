@@ -6,7 +6,7 @@ Reporting any issues
 --------------------
 
 if you have any issues with the software or any feature requests feel free to report them on the 
-`git hub page`_ or email me (ben.thorpe@york.ac.uk).
+`github page`_ or email me (ben.thorpe@york.ac.uk).
 
 .. _github page: https://github.com/bjthorpe/Bede_containers
 
