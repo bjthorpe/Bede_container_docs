@@ -136,3 +136,33 @@ Note the screenshots here are for OMAT24 however the procedure for UMA is exactl
 .. _OMAT24: https://huggingface.co/facebook/OMAT24#model-checkpoints
 .. _UMA: https://huggingface.co/facebook/UMA
 .. _huggingface website: https://huggingface.co/
+
+One final note about UMA models
+*******************************
+
+The models from Meta UMA are not officially a part of Matbench discovery but have been included as they are 
+Meta's latest models and thus may be of interest. Somewhat Annoyingly they are hybrid models i.e. each model 
+has sub-models for performing specific tasks. As such they have a slightly different workflow to the OMAT24 
+models.
+
+When you start the model you need to tell UMA what task to perform. Thus when using this model with CASTEP 
+you will need to add an extra cmd argument ``-T`` / ``--task`` as follows:
+
+.. code-block:: bash
+
+    # change directory to where .param and .cell are located
+    cd /location/of/<molecule>.param
+    ml-toolkit start UMA --task <taskname>
+    # wait for a few seconds as the server needs time to actually start-up
+    sleep 5
+    castep.serial <molecule>
+    ml-toolkit stop UMA
+
+where <taskname> can be any of:
+- oc20: use this for catalysis
+- oc22: use this for oxide catalysis (1p2 only)
+- oc25: use this for (electro)catalysis (1p2 only)
+- omat: use this for inorganic materials
+- omol: use this for molecules+polymers
+- odac: use this for MOFs
+- omc: use this for molecular crystals

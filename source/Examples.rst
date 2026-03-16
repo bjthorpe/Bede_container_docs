@@ -76,7 +76,7 @@ you will likely be greeted with an error similar to the following:
     ************************* See the docs for more details*************************
 
 In which case you will need to do some manual setup by following the instructions 
-under `Accessing Models from MetaAi`_
+under :ref:`Using Models from MetaAi <MetaAi>`
 
 Using the Atomic Simulation Environment
 ***************************************
@@ -519,7 +519,7 @@ Once complete you should get a ``Graphene.bands`` file which should produce a ba
 
 .. [#] For reference a network port is simply a number between 0 and 65535 that points to a location on the network used for communication between programs. See `this site`_ for more information.
 .. [#] An ip address is a number used in networking to identify different computers on the network. In our case we are using 127.0.0.1 which is a special number that the computer uses to refer to itself.
-.. [#] Once again if you want to use Models from MetaAi you will need to do some manual setup outlined in `Accessing Models from MetaAi`_ otherwise you will need to use different model.
+.. [#] Once again if you want to use Models from MetaAi you will need to do some manual setup outlined in :ref:`Using Models from MetaAi <MetaAi>` otherwise you will need to use different model.
 .. _this site: https://www.geeksforgeeks.org/computer-networks/what-is-ports-in-networking/
 
 Additional Advanced Options
@@ -683,3 +683,41 @@ submit with ``sbatch`` or with the following if you are running locally.
     ml-toolkit stop NequIP-OAM-L
 
 .. _GA tutorial: https://castep-docs.github.io/castep-docs/tutorials/GA/Introduction/
+
+One final note about Meta UMA models
+************************************
+
+The models from Meta UMA are not officially a part of Matbench discovery but have been included as they are 
+Meta's latest offering and thus may be of interest. Somewhat Annoyingly they are hybrid models i.e. each model 
+has sub-models for performing specific tasks. As such they have a slightly different workflow to the OMAT24 
+models.
+
+As such when you start any of the following models:
+
+- uma-s-1
+- uma-s-1p1
+- uma-m-1p1
+- uma
+
+You need to tell the model what task to perform. Thus when using them with CASTEP 
+you will need to add an extra cmd argument ``-T`` / ``--task`` as follows:
+
+.. code-block:: bash
+
+    # change directory to where .param and .cell are located
+    cd /location/of/<molecule>.param
+    ml-toolkit start UMA --task <taskname>
+    # wait for a few seconds as the server needs time to actually start-up
+    sleep 5
+    castep.serial <molecule>
+    ml-toolkit stop UMA
+
+where <taskname> can be any of:
+
+- oc20: use this for catalysis
+- oc22: use this for oxide catalysis (1p2 only)
+- oc25: use this for (electro)catalysis (1p2 only)
+- omat: use this for inorganic materials
+- omol: use this for molecules+polymers
+- odac: use this for MOFs
+- omc: use this for molecular crystals
