@@ -48,7 +48,7 @@ In which case you will need to do some manual setup.
 Getting a huggingface account and an API Token
 **********************************************
 
-First you will need to create an account with huggingface. To do this go to `huggingface.co`_
+First you will need to create an account with huggingface. To do this go to the `huggingface website`_
 and click on the button that says signup.
 
 .. figure:: images/meta/step1.png
@@ -116,7 +116,7 @@ window.
     :align: center
 
 Finally you need to request access to the models themselves. 
-There are two model families you need: `OMAT24`_` and the universal model for atoms (`UMA`_)
+There are two model families you need: `OMAT24`_ and the universal model for atoms (`UMA`_)
 you need to go to the webpage for each model family then click "Expand to review and access". Then scroll to the bottom, 
 fill in the form and click "agree and send request to access repo". You then just need to wait for meta to review this 
 and grant you access this is supposed to take up to 48 hours.
@@ -132,3 +132,7 @@ Note the screenshots here are for OMAT24 however the procedure for UMA is exactl
     :alt: Screenshot of hugging face signup page
     :width: 800
     :align: center
+
+.. _OMAT24: https://huggingface.co/facebook/OMAT24#model-checkpoints
+.. _UMA: https://huggingface.co/facebook/UMA
+.. _huggingface website: https://huggingface.co/
