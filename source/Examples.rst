@@ -108,7 +108,7 @@ of a hydrogen molecule and using ASE and MatterSim:
     # Example script to get potential of H2 molecule from with MatterSim through ASE
     # This should be run inside the MatterSim container.
 
-    from Matbench_Models import initialise_error, initialise_model
+    from Matbench_Models import Get_ASE_Calculator
     from ase import Atoms
     from ase.optimize import BFGS
     from ase.calculators.nwchem import NWChem
@@ -118,9 +118,9 @@ of a hydrogen molecule and using ASE and MatterSim:
     h2 = Atoms('H2', positions=[[0, 0, 0],[0, 0, 0.7]])
 
     # Tell ASE to use MatterSim as a Calculator
-    h2.calc = initialise_model('MatterSim')
+    h2.calc = Get_ASE_Calculator('MatterSim')
 
-    # Do the calculations 
+    # Do the calculations
     opt = BFGS(h2)
     opt.run(fmax=0.02)
     write('H2.xyz', h2)
@@ -135,7 +135,7 @@ This should be run with the bede_ml-toolkit as:
     # This only needs to be done the first time
     ml-toolkit build MatterSim
     
-    ml-toolkit run MatterSim python3 scripts/Examples/H2_MatterSim.py
+    ml-toolkit run MatterSim python3 $ML_TOOLKIT_HOME/Scripts/Examples/H2_MatterSim.py
 
 From here you could do some further analysis with ASE or convert the data for use 
 with another tool. In our case we will move on to calculating charge density 
