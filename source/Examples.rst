@@ -543,7 +543,7 @@ In this case we have asked for 6 severs communicating via TCP port 4124 each wit
 Si GA (server method)
 ---------------------
 
-Our final example is taken from the `GA tutorial`_ in the CASTEP docs. I consists of using a genetic algorithm
+Our final example is taken from the `GA tutorial`_ in the CASTEP docs. It consists of using a genetic algorithm
 to predict the most stable structure for a Si lattice (the correct answer for which is a diamond structure).
 
 In this case the cell file already uses the PP devel code so it is easy enough to add in the extra

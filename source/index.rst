@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to bede_ml-toolkit documentation
-===================================
+========================================
 
 Introduction:
 -------------
@@ -64,5 +64,6 @@ We have chosen containers as a way of interfacing with AI/ML models on Bede for 
    Ollama
    Options
    Developer
+   MetaAi
    
    
