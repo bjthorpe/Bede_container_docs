@@ -38,7 +38,7 @@ A brief note on using Models from MetaAi:
 *****************************************
 
 Unfortunately, due to MetaAi's licencing terms you need both a Huggingface account and an API key to be able to download model
-checkpoints for use with bede_ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
+checkpoints for use with Bede_ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
 
 Thus if you attempt to build/use any of the models tagged MetaAi. that is any of the following:
 
@@ -72,7 +72,7 @@ you will likely be greeted with an error similar to the following:
                             All config files look good                           
     ********************************************************************************
     *** You have asked for a model that requires a HuggingFace API key to build.****
-    **** This needs to be provided in: /home/ben/ML_Toolkit/API_Keys/HF_AUTH.key****
+    **** This needs to be provided in: ${ML_TOOLKIT_HOME}/API_Keys/HF_AUTH.key  ****
     ************************* See the docs for more details*************************
 
 In which case you will need to do some manual setup by following the instructions 
@@ -192,7 +192,7 @@ the theory behind these calculations.
 
 If you need this CASTEP already has `extensive documentation`_ and we will adapting several of the tutorial 
 examples to work with ML potentials. For users on Bede there is (or will be) a module 
-containing copy CASTEP 26 available as ``module load castep``. For anyone else you will need 
+containing copy CASTEP 26 available as ``module load CASTEP``. For anyone else you will need 
 to `install a recent version of CASTEP`_ (preferably V25 or above).
 
 .. _install a recent version of CASTEP: https://www.castep.org/get_castep
@@ -211,12 +211,12 @@ Also it is the latest GPU branch so if you really want to use GPU I can easily r
 for the time being as I did not want the additional complications with OpenACC.
 
 It's under ``/projects/bdyrk04/castep26`` you will need to ``module load nvhpc/24.1`` and ``openmpi/4.1.6``.
-You can ignore the system version of OpenBLAS and fftw, as for whatever reason they are only available for gcc. 
-NVHPC uses its own blas but only provides cufft which is GPU only. So I complied my own version of fftw under 
+You can ignore the system version of OpenBLAS and FFTW, as for whatever reason they are only available for gcc. 
+NvHPC uses its own BLAS but only provides CuFFT which is GPU only. So I complied my own version of fftw under 
 ``/projects/bdyrk04/libs/lib``.
 
 Charge density of Si lattice (file method)
-******************************************
+------------------------------------------
 
 We will start with a simple calculation used in the CASTEP `charge density tutorial_`. It consists of 
 a Si lattice made from a 3 atom unit cell. The CASTEP .cell file should be as follows:
@@ -291,7 +291,7 @@ you can then submit the batch script with
 Users on there own machines can just run CASTEP as you normally would.
 
 Modification to work with ML Potentials
-*****************************************
+***************************************
 
 To modify this to work with an ML potential we you first we need to ensure you have activated your python virtual 
 env if you have not already done so. [#]_ In the Scripts directory for ML_toolkit you will find two files: 
@@ -348,7 +348,7 @@ Vesta is not available.
 .. [#] You can easily tell if your python virtual env is active if you can see (bede_ml-toolkit) in your terminal. If not you need to run ``source ~/.venv/bede_ml-toolkit/bin/activate``
 
 Bandstructure of Graphene (server method)
-*****************************************
+-----------------------------------------
 
 Next we'll try something a bit more interesting the following .cell and .param files setup a calculation of the Bandstructure
 for a 1D Hexagonal lattice of carbon atoms, a.k.a  Graphene.
@@ -386,7 +386,7 @@ for a 1D Hexagonal lattice of carbon atoms, a.k.a  Graphene.
 
 .. code-block::
 
-    # Graphine.cell
+    # graphene.cell
     %BLOCK LATTICE_CART
     ang
     2.460000  0.000000  0.000000
@@ -490,7 +490,7 @@ Once this is complete if you are on Bede you can use the following bash script a
     ml-toolkit stop eSEN-30M-OAM
 
 or if running you are running locally you can just run the following to start ml-toolit as a server in the background. 
-Then run CASETP and finally shut down the server. Note: you may need to use the ``sleep`` command to wait 
+Then run CASTEP and finally shut down the server. Note: you may need to use the ``sleep`` command to wait 
 for a few seconds between starting the server and CASTEP as the server can take a short while to actually 
 start-up. 
 
@@ -509,19 +509,177 @@ Once complete you should get a ``Graphene.bands`` file which should produce a ba
 .. figure:: images/graphene_bands_ML.png
     :alt: example bandstructure for Graphene produced by CASTEP using the eSEN-30M-OAM model for potential, forces and stresses.
     :width: 800
-    :align: center
+    :align: Center
 
-    example bandstructure for Graphene produced by CASTEP. using the eSEN-30M-OAM model for potential,
+    example bandstructure for Graphene produced by CASTEP using the eSEN-30M-OAM model for potential,
     forces and stresses.
     
     Note: we used the dispersion.pl plotting script with the -sym=hexagonal parameter to get the 
     correct labels for the path though the brillouin zone.
 
 .. [#] For reference a network port is simply a number between 0 and 65535 that points to a location on the network used for communication between programs. See `this site`_ for more information.
-.. [#] An I.p address is a number used in networking to identify different computers on the network. In our case we are using 127.0.0.1 which is a special number that the computer uses to refer to itself.
+.. [#] An ip address is a number used in networking to identify different computers on the network. In our case we are using 127.0.0.1 which is a special number that the computer uses to refer to itself.
 .. [#] Once again if you want to use Models from MetaAi you will need to do some manual setup outlined in `Accessing Models from MetaAi`_ otherwise you will need to use different model.
 .. _this site: https://www.geeksforgeeks.org/computer-networks/what-is-ports-in-networking/
 
+Additional Advanced Options
+***************************
+
+The server method has a few additional options that can be used to allow for more flexibility and help improve performance when running over many cpu cores with mpi. 
+These options can be passed in as command line parameters to the ``ml-toolkit start`` command.
+
+- ``-p, --port PORT_NUM`` sets the TCP port used for network communication. Useful if port 5000 is already in use on your network. must be greater than 1024 default is port 5000.
+- ``-t, --timeout TIME``   Server timeout in seconds. The server will be restated if no communication occurs for set amount of time. This is useful for redundancy if the ML model should crash. Must be greater than 0, default is 60 seconds.
+- ``-N, --Nservers NUM_SERVERS`` Number of python servers to spawn, for best performance set this to the number of mpi processes, must be greater than 0. Default is 1
+
+an example of how to use this is as follows:
+
+.. code-block:: bash
+
+    ml-toolkit start eSEN-30M-OAM -N 6 -p 4124 -t 70
+
+In this case we have asked for 6 severs communicating via TCP port 4124 each with a timeout of 70 seconds.
 
 Si GA (server method)
-*********************
+---------------------
+
+Our final example is taken from the `GA tutorial`_ in the CASTEP docs. I consists of using a genetic algorithm
+to predict the most stable structure for a Si lattice (the correct answer for which is a diamond structure).
+
+In this case the cell file already uses the PP devel code so it is easy enough to add in the extra
+bits needed to use an ML potential.
+
+For reference the original .cell file is:
+
+.. code-block::
+
+    %block LATTICE_ABC
+    ang
+    3.8 3.8 3.8
+    90  90  90
+    %endblock LATTICE_ABC
+
+    %block POSITIONS_FRAC
+    Si  0.203  0.617  0.209
+    Si  0.844  0.442  0.350
+    Si  0.964  0.379  0.096
+    Si  0.762  0.524  0.941
+    Si  0.544  0.605  0.781
+    Si  0.238  0.597  0.531
+    Si  0.728  0.914  0.742
+    Si  0.209  0.929  0.435
+    %endblock POSITIONS_FRAC
+
+    %BLOCK SPECIES_POT
+    QC5
+    %ENDBLOCK SPECIES_POT
+
+    symmetry_generate
+    symmetry_tol : 0.05 ang
+
+and the .param file is:
+
+.. code-block::
+
+    task             = genetic algor # Run the GA
+    ga_pop_size      = 12            # Parent population size
+    ga_max_gens      = 12            # Max number of generations to run for
+    ga_mutate_amp    = 1.00          # Mutation amplitude (in Angstrom)
+    ga_mutate_rate   = 0.15          # Probability of mutation to occur
+    ga_fixed_N       = true          # Fix number of ions in each member based on input cell
+
+    rand_seed        = 101213 # Random seed for replicability
+    opt_strategy     = SPEED  # Run quick
+
+    geom_max_iter    = 211 # Can have a large max iter as using pair potentials
+
+    # Don't write most output files for each population member
+    write_checkpoint = NONE
+    write_bib        = FALSE
+    write_cst_esp    = FALSE
+    write_bands      = FALSE
+    write_cell_structure = TRUE
+
+    ######################################
+    # Any extra devel code options       #
+    # & required GA specific devel flags #
+    ######################################
+
+    %block devel_code
+
+    # Command used to call CASTEP for each population member
+    # If not given this defaults to castep.serial
+    CMD: castep.serial :ENDCMD
+
+    GA:
+
+        PP=T   # Using a pair potential
+        IPM=M  # Randomly mutated initial population
+
+        CW=24  # Num gens for convergence
+
+        NI=F   # No niching
+        FW=0.5 # Fitness weighting
+
+        # Asynchronous running options
+        # Required for asynchronous running, without this all geom opts will be run
+        # one after another
+        AS=T   # Run geometry optimisations asynchronously
+        MS=3   # Run 3 geometry optimisations at once
+
+        # Random symmetry children
+        NUM_CHILDREN=12
+        RSC=F
+
+        CORE_RADII_LAMBDA=0.8 # Core radii 0.8 pseudo-potential radii
+
+        SCALE_IGNORE_CONV=T   # Ignore convergence in fitness calculation
+
+    :ENDGA
+
+    # Use pair potentials in geometry optimisations and perform a final snap to symmetry
+    GEOM: PP=T SNAP=T :ENDGEOM
+
+    # Use the Stillinger-Weber pair potential
+    PP=T
+    PP:
+        SW=T
+    :ENDPP
+
+    %endblock devel_code
+
+all we need to do is modify lines 61-63  to add in ``SOC=T`` to the PP devel_code block:
+the keywords to define the socket interface.
+
+.. code-block::
+
+    PP:
+        SW=T
+        SOC=T
+    :ENDPP
+
+then outside the devel_code block. (i.e. before line 24 ``%block devel_code`` 
+or after line 65 ``%endblock devel_code``) add in the extra keywords to define 
+the network settings.
+
+.. code-block::
+
+    socket_port 5000 
+    socket_host 127.0.0.1
+
+From there to should be able to run CASTEP with an ML model in the same way as the 
+previous example. i.e. If you are on Bede you can modify the batch script then 
+submit with ``sbatch`` or with the following if you are running locally.
+
+.. code-block:: bash
+
+    # change directory to where Graphene.param and Graphene.cell are located
+    cd /location/of/Si_GA.param
+    # in this case we are using a model from NequIP
+    ml-toolkit start NequIP-OAM-L
+    # wait for a few seconds as the server needs time to actually start-up
+    sleep 5
+    castep.serial Si_GA
+    ml-toolkit stop NequIP-OAM-L
+
+.. _GA tutorial: https://castep-docs.github.io/castep-docs/tutorials/GA/Introduction/
