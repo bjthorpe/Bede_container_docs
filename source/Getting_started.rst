@@ -35,13 +35,13 @@ To install bede_ml-toolit run the following commands:
 .. code-block:: bash
     
     #create python virtual environment (recommended)
-    python -m venv ~/.venv/bede-ml-toolkit
+    python -m venv ~/.venv/bede_ml-toolkit
     source ~/.venv/bede_ml-toolkit/bin/activate
     # install bede_ml-toolkit
     pip install bede-ml-toolkit
     # if needed
     install_apptainer
-    install_bede_ml-toolkit
+    install_ml-toolkit
 
 This will download and install all the necessary files to your system.
 it will also install apptainer if needed and create a directory called
