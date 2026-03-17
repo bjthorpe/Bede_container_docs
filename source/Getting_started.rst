@@ -184,12 +184,13 @@ Once this is complete we can run a command inside this container using:
     ml-toolkit run TestContainer COMMAND 
 
 Where COMMAND is the Linux command we wish the container to run. In our case we will run 
-the fortune command, to generate a random (possibly silly) quote then pass it 
-into the cowsay command which will then display a message.
+a script (found in ML_Toolkit/Scripts directory) that runs the fortune command, to generate 
+a random (possibly silly) quote then passes it into the cowsay command which will then 
+display the message.
 
 .. code-block:: bash
 
-    ml-toolkit run TestContainer "fortune | cowsay"
+    ml-toolkit run TestContainer $ML_TOOLKIT_HOME/Scripts/speak_wisdom.sh
 
 If all has gone to plan you should see similar output to the following:
 
