@@ -84,12 +84,20 @@ Finally you will need to run the two install scripts:
     install_apptainer
     install_bede_ml-toolkit
 
+The ``install_bede_ml-toolkit`` script also optionally has an option ``--dev`` which allows
+you to use the Data directory of the git repo as ML_TOOLKIT_HOME, with git ignore setup to 
+not track Images logs etc. This is useful if you are developing stuff your changes all 
+tracked within git and you don't have to remember to copy code over to the ``~/ML_Toolkit`` 
+directory for testing. 
+
+It also pairs well with ``pip install -e .`` so you can change code in the repo and not have 
+to re-run pip install.
+
 Optionally you can now run the unit tests using:
 
 .. code-block:: bash
 
     pytest
-
 
 The ML_Toolkit directory
 ------------------------
