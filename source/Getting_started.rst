@@ -72,8 +72,8 @@ virtual environment for this:
 
 .. code-block:: bash
 
-    python3 -m venv bede_ml-toolkit
-    source bede_ml-toolkit/bin/activate
+    python3 -m venv ~/.venv/bede_ml-toolkit
+    source ~/.venv/bede_ml-toolkit/bin/activate
     pip install dacite pyyaml pytest
     pip install . 
 
