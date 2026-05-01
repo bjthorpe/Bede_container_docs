@@ -20,17 +20,28 @@ this is the case).
 
 .. _ghlogin command.: https://bede-documentation.readthedocs.io/en/latest/usage/index.html#connecting-to-the-ghlogin-node
 
-Bede Installation instructions
-------------------------------
+System Requirements:
+--------------------
 
-Once you are logged into the Bede Grace-Hopper node you have two options you can either 
-install ml-toolkit for all users on the system using pipx or you can download the 
-python source files and build it from there.
+ml-toolkit relies on Apptainer which is only officially supported on Linux systems. As such we only support and provide pip builds for Linux (Arm64 and X86).
+
+Users on Windows 10/11 can install Apptainer through Windows Subsystem for Linux (WSL) whilst MacOs users.
+can use a tool called lima. `Instructions for which can be found here: <https://deepwiki.com/apptainer/apptainer-admindocs/2.2-windows-and-macos-installation>`_
+
+Note these have not been thoroughly tested but appear to work if you wish to use them. However your mileage may vary.
+
+Installation instructions
+-------------------------
+
+To install ml-toolkit you have a few options you can: 
+
+1. install ml-toolkit for the current user using pip
+2. download the python source files from github and build it from there.
 
 Using pip (recommended for most users):
 ----------------------------------------
 
-To install bede_ml-toolit run the following commands:
+To install ml-toolkit run the following commands:
 
 .. code-block:: bash
     
@@ -44,7 +55,7 @@ To install bede_ml-toolit run the following commands:
     install_ml-toolkit
 
 This will download and install all the necessary files to your system.
-it will also install apptainer if needed and create a directory called
+it will also install Apptainer if needed and create a directory called
 ML_Toolkit in your home directory.
 
 This is used to house all the various config, definition files and container 
@@ -55,6 +66,7 @@ install it as:
 .. code-block:: bash
 
     install_ml-toolkit -p /path/to/install/to
+
 
 Installing from source (recommended for developers/advanced users):
 -------------------------------------------------------------------
@@ -74,7 +86,6 @@ virtual environment for this:
 
     python3 -m venv ~/.venv/ml-toolkit
     source ~/.venv/ml-toolkit/bin/activate
-    pip install dacite pyyaml pytest
     pip install . 
 
 Finally you will need to run the two install scripts:
@@ -93,11 +104,18 @@ directory for testing.
 It also pairs well with ``pip install -e .`` so you can change code in the repo and not have 
 to re-run pip install.
 
-Optionally you can now run the unit tests using:
+Optionally you can now run a more through set of unit tests using:
 
 .. code-block:: bash
 
     pytest
+
+Note: there are two tests that are disabled by default. These require a separate working installation
+of CASTEP which is used by some of the included AI models. If desired these can be enabled with:
+
+ .. code-block:: bash
+
+    pytest -m CASTEP
 
 The ML_Toolkit directory
 ------------------------
@@ -106,7 +124,7 @@ The software we downloaded contains a number of different files
 and folders so I think it is worthwhile briefly covering the 
 important files/folders and what each of them is used for.
 
-All files used by bede_ml-tookit are located in the ``ML_Toolkit`` directory
+All files used by ml-toolkit are located in the ``ML_Toolkit`` directory
 which was created during installation and is located in the users 
 home directory by default.
 
@@ -207,12 +225,7 @@ If all has gone to plan you should see similar output to the following:
     *********************************************************************
     ***************** Loading Model Config Files ************************
     *********************************************************************
-    Reading config from file: Container_Configs/ollama.yaml
-    Container_Configs/ollama.yaml OK
-    Reading config from file: Container_Configs/test1.yaml
-    Container_Configs/test1.yaml OK
-    Reading config from file: Container_Configs/test2.yaml
-    Container_Configs/test2.yaml OK
+                           All config files look good                    
     *********************************************************************
     ***************** Running: TestContainer *********************
     *********************************************************************
@@ -263,6 +276,14 @@ For example
 
 Will list only list containers with the tag Test.
 
+you can also use the -m <model_name> option to get details of a specific model 
+and the -l option to expand the model description beyond the default 80 characters.
+
+for example:
+.. code-block:: bash
+
+    ml-toolkit list -l -m PET-MAD-S
+
 **Start** and **Stop** are also useful commands they allow you to run 
 containers as background processes which is useful for certain types of software.
 
@@ -291,9 +312,11 @@ using the -h or (--help) option as follows:
     A CLI tool for easily running AI/ML containers on Bede.
 
     positional arguments:
-    {run,build,load,list,start,stop}
+    {run,convert,build,load,list,start,stop}
                             Operation to perform.
-        run                 Run command(s), with the Container
+        run                 Run command(s), with the Container    
+        convert             Convert existing Model Container to/from editable/static, useful for development as it saves having to re-build
+                            containers when making small changes.
         build               Build the Container, exactly equivalent to load
         load                Build the Container, exactly equivalent to build
         list                List available containers
@@ -302,8 +325,6 @@ using the -h or (--help) option as follows:
 
     options:
     -h, --help            show this help message and exit
-    --config_file CONFIG_FILE
-                            path to Config file for Models
     --debug               Print generated Apptainer command instead of running container, useful for sanity checking
 
 Note this is the best place to check first as if new options are added it will likely be more up to date 
