@@ -6,10 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'bede_ml-toolkit'
+project = 'ml-toolkit'
 copyright = '2026, Ben Thorpe'
 author = 'Ben Thorpe'
-release = '0.90'
+release = '1.0.5'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

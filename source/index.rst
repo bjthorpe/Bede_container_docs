@@ -1,17 +1,17 @@
-.. bede_ml-toolkit documentation master file, created by
+.. ml-toolkit documentation master file, created by
    sphinx-quickstart on Mon Nov 24 14:46:00 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to bede_ml-toolkit documentation
+Welcome to ml-toolkit documentation
 ========================================
 
 Introduction:
 -------------
-bede_ml-toolkit is a python script designed to make working with ML/AI models 
+ml-toolkit is a python script designed to make working with ML/AI models 
 simpler and easier on the Bede grace hopper nodes by using containers. 
 
-These docs apply to version 1.0.2 (tagged as V1.0.2 on github) 
+These docs apply to version 1.0.5 (tagged as V1.0.5 on github) 
 
 Containers
 ----------

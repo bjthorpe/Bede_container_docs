@@ -38,7 +38,7 @@ A brief note on using Models from MetaAi:
 *****************************************
 
 Unfortunately, due to MetaAi's licencing terms you need both a Huggingface account and an API key to be able to download model
-checkpoints for use with Bede_ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
+checkpoints for use with ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
 
 Thus if you attempt to build/use any of the models tagged MetaAi. that is any of the following:
 
@@ -126,11 +126,11 @@ of a hydrogen molecule and using ASE and MatterSim:
     write('H2.xyz', h2)
     h2.get_potential_energy()
 
-This should be run with the bede_ml-toolkit as:
+This should be run with the ml-toolkit as:
 
 .. code-block:: bash
 
-    # change directory to to wherever bede_ml-toolkit is installed
+    # change directory to to wherever ml-toolkit is installed
     cd $ML_TOOLKIT_HOME
     # This only needs to be done the first time
     ml-toolkit build MatterSim
@@ -263,7 +263,7 @@ Users on bede will want to create a slurm script ``test_castep.sh`` to run on th
 
     #!/bin/bash
     # Example SLURM script for CASTEP 
-    # with the bede_ml-toolkit
+    # with the ml-toolkit
     ##########################################
     #SBATCH --account CHANGE_ME              # charge job to specified account
     #SBATCH --cpus-per-task 1                # number of cpus required per task
@@ -276,7 +276,7 @@ Users on bede will want to create a slurm script ``test_castep.sh`` to run on th
     #SBATCH --gres gpu:1                     # Number of GPUs required for the job
     ##########################################
     # source the python virtual environment
-    source ~/.venv/bede_ml-toolkit/bin/activate
+    source ~/.venv/ml-toolkit/bin/activate
     module load castep
     # change directory to where Si.param and Si.cell are located
     cd /location/of/si.param
@@ -295,7 +295,7 @@ Modification to work with ML Potentials
 
 To modify this to work with an ML potential we you first we need to ensure you have activated your python virtual 
 env if you have not already done so. [#]_ In the Scripts directory for ML_toolkit you will find two files: 
-predict.sh and ML_file.py these will be used by CASTEP to call bede_ML-toolkit at the appropriate time 
+predict.sh and ML_file.py these will be used by CASTEP to call ml-toolkit at the appropriate time 
 and tell it which model to use.
 
 Next we need to modify the param file by adding the following devel_code block to the end of the Si.param file.
@@ -345,7 +345,7 @@ For users on Bede you will need to copy the files to your local machine and do t
 Vesta is not available.
 
 .. _charge density tutorial: https://castep-docs.github.io/castep-docs/tutorials/Bonding_and_Charge/charge_density/
-.. [#] You can easily tell if your python virtual env is active if you can see (bede_ml-toolkit) in your terminal. If not you need to run ``source ~/.venv/bede_ml-toolkit/bin/activate``
+.. [#] You can easily tell if your python virtual env is active if you can see (ml-toolkit) in your terminal. If not you need to run ``source ~/.venv/ml-toolkit/bin/activate``
 
 Bandstructure of Graphene (server method)
 -----------------------------------------
@@ -453,7 +453,7 @@ network port 5000 [#]_. ``socket_host 127.0.0.1`` tell CASTEP the ip address [#]
 The remaining lines inside the devel_code block simply enables the PP devel_code and tells CASTEP to get potentials, forces and stresses
  from an external process on the network.
 
-Once the param file has been modified we next need to build a container with the bede_ml-toolkit. In this example we will use 
+Once the param file has been modified we next need to build a container with the ml-toolkit. In this example we will use 
 one of the MetaAi Omat24 models eSEN-30M-OAM [#]_
 
 .. code-block:: bash
@@ -466,7 +466,7 @@ Once this is complete if you are on Bede you can use the following bash script a
 
     #!/bin/bash
     # Example SLURM script for CASTEP 
-    # with the bede_ml-toolkit
+    # with the ml-toolkit
     ##########################################
     #SBATCH --account CHANGE_ME              # charge job to specified account
     #SBATCH --cpus-per-task 1                # number of cpus required per task
@@ -479,7 +479,7 @@ Once this is complete if you are on Bede you can use the following bash script a
     #SBATCH --gres gpu:1                     # Number of GPUs required for the job
     ##########################################
     # source the python virtual environment
-    source ~/.venv/bede_ml-toolkit/bin/activate
+    source ~/.venv/ml-toolkit/bin/activate
     module load castep
     # change directory to where Graphene.param and Graphene.cell are located
     cd /location/of/graphene.param

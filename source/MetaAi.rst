@@ -6,7 +6,7 @@ Using Models from MetaAi
 
 
 Unfortunately, due to MetaAi's licencing terms you need both a Huggingface account and an API key to be able to download model
-checkpoints for use with Bede_ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
+checkpoints for use with ml-toolkit. Furthermore they have gone out of there way to prevent automation. 
 
 Thus if you attempt to build/use any of the models tagged MetaAi. that is any of the following:
 

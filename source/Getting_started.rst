@@ -3,7 +3,7 @@ Getting started
 
 Initial setup
 -------------
-The bede_ml-toolkit was primarily built for use on 
+The ml-toolkit was primarily built for use on 
 the Grace-Hopper nodes of N8 HPC cluster Bede. You will
 first need to register for an account. Instructions for 
 this can be found in the `Bede Documentation.`_
@@ -24,7 +24,7 @@ Bede Installation instructions
 ------------------------------
 
 Once you are logged into the Bede Grace-Hopper node you have two options you can either 
-install bede_ml-toolkit for all users on the system using pipx or you can download the 
+install ml-toolkit for all users on the system using pipx or you can download the 
 python source files and build it from there.
 
 Using pip (recommended for most users):
@@ -35,9 +35,9 @@ To install bede_ml-toolit run the following commands:
 .. code-block:: bash
     
     #create python virtual environment (recommended)
-    python -m venv ~/.venv/bede_ml-toolkit
-    source ~/.venv/bede_ml-toolkit/bin/activate
-    # install bede_ml-toolkit
+    python -m venv ~/.venv/ml-toolkit
+    source ~/.venv/ml-toolkit/bin/activate
+    # install ml-toolkit
     pip install bede-ml-toolkit
     # if needed
     install_apptainer
@@ -54,7 +54,7 @@ install it as:
 
 .. code-block:: bash
 
-    install_bede_ml-toolkit -p /path/to/install/to
+    install_ml-toolkit -p /path/to/install/to
 
 Installing from source (recommended for developers/advanced users):
 -------------------------------------------------------------------
@@ -63,7 +63,7 @@ You will first need to download the git repository code using:
 
 .. code-block:: bash
 
-    git clone https://github.com/bjthorpe/Bede_containersg
+    git clone https://github.com/bjthorpe/Bede_containers
     git checkout dev
     cd Bede_containers
 
@@ -72,8 +72,8 @@ virtual environment for this:
 
 .. code-block:: bash
 
-    python3 -m venv ~/.venv/bede_ml-toolkit
-    source ~/.venv/bede_ml-toolkit/bin/activate
+    python3 -m venv ~/.venv/ml-toolkit
+    source ~/.venv/ml-toolkit/bin/activate
     pip install dacite pyyaml pytest
     pip install . 
 
@@ -82,9 +82,9 @@ Finally you will need to run the two install scripts:
 .. code-block:: bash
 
     install_apptainer
-    install_bede_ml-toolkit
+    install_ml-toolkit
 
-The ``install_bede_ml-toolkit`` script also optionally has an option ``--dev`` which allows
+The ``install_ml-toolkit`` script also optionally has an option ``--dev`` which allows
 you to use the Data directory of the git repo as ML_TOOLKIT_HOME, with git ignore setup to 
 not track Images logs etc. This is useful if you are developing stuff your changes all 
 tracked within git and you don't have to remember to copy code over to the ``~/ML_Toolkit`` 
@@ -128,12 +128,12 @@ The ML_toolkit directory contains the following sub-directories:
 - **Models:** Checkpoint Files used for the various pre-trained models.
 - **logs:** Log files containing more detailed output from the program, useful for debugging.
 
-In order to use containers with the bede_ml-toolkit we need two things:
+In order to use containers with the ml-toolkit we need two things:
 
 1. A container config (.yaml) file
 2. A container definition
    
-Both of these combined will tell bede_ml-toolkit and Apptainer what software, files 
+Both of these combined will tell ml-toolkit and Apptainer what software, files 
 and steps are needed in order to build our container. We will go into more detail 
 about how these files are constructed  in later sections. 
 
@@ -232,7 +232,7 @@ notably does not contain the output of the container itself. In this
 case the Ascii art cow. However it does contain useful information including:
 
 + what files/folders the container is accessing
-+ the variables used for each config bede_ml-toolkit has found
++ the variables used for each config ml-toolkit has found
 + a summary of the underlying Apptainer commands the script is running 
 + Warnings about config issues that won't necessarily crash the container but may cause issues. 
 
