@@ -12,11 +12,11 @@ directory. These are also all setup with corresponding config files in
 ``Container_Configs/MatBench_Discovery`` such that you can 
 simply refer to them by name.
 
-.. [1] At time of writing (Dec 2025)
+.. [1] At time of writing (May 2026)
 .. _Matbench Discovery: https://matbench-discovery.materialsproject.org/
 
 To use a model, for example the current number 
-one model, eSEN-30M-OAM, we first need to load the model with:
+two model, eSEN-30M-OAM, we first need to load the model with:
 
 .. code-block:: bash
 
@@ -101,7 +101,7 @@ is the name of the model you wish to use and returns an appropriate
 ASE calculator for that particular ML model.
 
 As such the following is an example of how to predict and extract the potential
-of a hydrogen molecule and using ASE and MatterSim:
+of a hydrogen molecule and using ASE and a model from MatterSim:
 
 .. code-block:: python
 
@@ -118,7 +118,7 @@ of a hydrogen molecule and using ASE and MatterSim:
     h2 = Atoms('H2', positions=[[0, 0, 0],[0, 0, 0.7]])
 
     # Tell ASE to use MatterSim as a Calculator
-    h2.calc = Get_ASE_Calculator('MatterSim')
+    h2.calc = Get_ASE_Calculator('MatterSim_V1_5M')
 
     # Do the calculations
     opt = BFGS(h2)
@@ -133,9 +133,9 @@ This should be run with the ml-toolkit as:
     # change directory to to wherever ml-toolkit is installed
     cd $ML_TOOLKIT_HOME
     # This only needs to be done the first time
-    ml-toolkit build MatterSim
+    ml-toolkit build MatterSim_V1_5M
     
-    ml-toolkit run MatterSim python3 $ML_TOOLKIT_HOME/Scripts/Examples/H2_MatterSim.py
+    ml-toolkit run MatterSim_V1_5M python3 $ML_TOOLKIT_HOME/Scripts/Examples/H2_MatterSim.py
 
 From here you could do some further analysis with ASE or convert the data for use 
 with another tool. In our case we will move on to calculating charge density 
@@ -191,34 +191,19 @@ familiarity with CASTEP. Thus we will not be covering the basics of how to use i
 the theory behind these calculations.
 
 If you need this CASTEP already has `extensive documentation`_ and we will adapting several of the tutorial 
-examples to work with ML potentials. For users on Bede there is (or will be) a module 
-containing copy CASTEP 26 available as ``module load CASTEP``. For anyone else you will need 
-to `install a recent version of CASTEP`_ (preferably V25 or above).
+examples to work with ML potentials. For users on Bede CASTEP is licenced on a project by project basis. 
+
+If your project has a licence there will be a folder available under ``/projects/{PROJECT_CODE}/castep26`` 
+containing copy CASTEP 26 complied for grace-hopper (if not you will need to ask the bede admin team for 
+access). For anyone else you will need to `install a recent version of CASTEP`_ (preferably Version 26).
 
 .. _install a recent version of CASTEP: https://www.castep.org/get_castep
 .. _extensive documentation: https://castep-docs.github.io/castep-docs/
 
-A Note to Kit and Scott:
-************************
-
-I have compiled a version of CASTEP 26 on Bede for testing using the nvidia compiler 
-with both serial and OpenMPI. Note I had serious issues getting this working. CASTEP itself definitely now works. 
-However, Some of the utilities and analysis tools (optados, cif2cell, xmgrace ect..) would not compile 
-properly with ARM64 Thus they may or may not be available. As such i suggest you copy the CASTEP output off 
-bede and do any analysis ect locally.
-
-Also it is the latest GPU branch so if you really want to use GPU I can easily recompile it. However, I kept it CPU only 
-for the time being as I did not want the additional complications with OpenACC.
-
-It's under ``/projects/bdyrk04/castep26`` you will need to ``module load nvhpc/24.1`` and ``openmpi/4.1.6``.
-You can ignore the system version of OpenBLAS and FFTW, as for whatever reason they are only available for gcc. 
-NvHPC uses its own BLAS but only provides CuFFT which is GPU only. So I complied my own version of fftw under 
-``/projects/bdyrk04/libs/lib``.
-
 Charge density of Si lattice (file method)
 ------------------------------------------
 
-We will start with a simple calculation used in the CASTEP `charge density tutorial_`. It consists of 
+We will start with a simple calculation used in the CASTEP `charge density tutorial`_. It consists of 
 a Si lattice made from a 3 atom unit cell. The CASTEP .cell file should be as follows:
 
 .. code-block::
@@ -288,7 +273,14 @@ you can then submit the batch script with
 
     sbatch castep_test.sh
 
-Users on there own machines can just run CASTEP as you normally would.
+Users on there own machines can just run CASTEP as you normally i.e.
+
+.. code-block:: bash
+
+    # for serial
+    castep.serial Si
+    # or mpi parallel
+    mpirun -n 4 castep.mpi Si
 
 Modification to work with ML Potentials
 ***************************************
@@ -332,13 +324,26 @@ it uses predict.sh in the ``ML_Toolkit/Scripts`` directory. You will also notice
 use. This can be any model you like, for this example we have chosen MatterSim.
 
 Before running CASTEP we next need to ensure we have built an appropriate container for our ML model. 
-As previously discussed we have chosen MatterSim for this example.
+As previously discussed we have chosen one from MatRIS for this example.
 
 .. code-block:: bash
 
-    ml-toolkit build MatterSim
+    ml-toolkit build MatRIS_10M_OAM
 
-Once this is complete we can run CASTEP as we did previously.
+Once this is complete we can run CASTEP as we did previously i.e.
+
+.. code-block:: bash
+
+    sbatch castep_test.sh
+
+If on Bede or
+
+.. code-block:: bash
+
+    # for serial
+    castep.serial Si
+    # or mpi parallel
+    mpirun -n 4 castep.mpi Si
 
 At this point you can compare the charge density to the original using Vesta as per the original tutorial. 
 For users on Bede you will need to copy the files to your local machine and do the analysis there as 
@@ -484,8 +489,6 @@ Once this is complete if you are on Bede you can use the following bash script a
     # change directory to where Graphene.param and Graphene.cell are located
     cd /location/of/graphene.param
     ml-toolkit start eSEN-30M-OAM
-    # waith for a few seconds as the server needs time to actually start up
-    sleep 5
     castep.serial Graphene
     ml-toolkit stop eSEN-30M-OAM
 
@@ -499,12 +502,10 @@ start-up.
     # change directory to where Graphene.param and Graphene.cell are located
     cd /location/of/graphene.param
     ml-toolkit start eSEN-30M-OAM
-    # wait for a few seconds as the server needs time to actually start-up
-    sleep 5
     castep.serial Graphene
     ml-toolkit stop eSEN-30M-OAM
 
-Once complete you should get a ``Graphene.bands`` file which should produce a bandstructure plot similar to the following:
+Once complete you should get a number of output files. These include  ``Graphene.bands`` which should produce a bandstructure plot similar to the following:
 
 .. figure:: images/graphene_bands_ML.png
     :alt: example bandstructure for Graphene produced by CASTEP using the eSEN-30M-OAM model for potential, forces and stresses.
@@ -516,6 +517,11 @@ Once complete you should get a ``Graphene.bands`` file which should produce a ba
     
     Note: we used the dispersion.pl plotting script with the -sym=hexagonal parameter to get the 
     correct labels for the path though the brillouin zone.
+
+One final thing to note are the files ``eSEN-30M-OAM.out`` and ``eSEN-30M-OAM.err``. These 
+contain the output and any errors from the python server. They should (hopefully) be blank 
+as there is no output by default. However in the event of any errors these, along with files 
+in the TOOLKIT_HOME/logs directory are a good first place to look.
 
 .. [#] For reference a network port is simply a number between 0 and 65535 that points to a location on the network used for communication between programs. See `this site`_ for more information.
 .. [#] An ip address is a number used in networking to identify different computers on the network. In our case we are using 127.0.0.1 which is a special number that the computer uses to refer to itself.
@@ -531,6 +537,8 @@ These options can be passed in as command line parameters to the ``ml-toolkit st
 - ``-p, --port PORT_NUM`` sets the TCP port used for network communication. Useful if port 5000 is already in use on your network. must be greater than 1024 default is port 5000.
 - ``-t, --timeout TIME``   Server timeout in seconds. The server will be restated if no communication occurs for set amount of time. This is useful for redundancy if the ML model should crash. Must be greater than 0, default is 60 seconds.
 - ``-N, --Nservers NUM_SERVERS`` Number of python servers to spawn, for best performance set this to the number of mpi processes, must be greater than 0. Default is 1
+- ``-r NUM_RETRY, --num_retry NUM_RETRY`` number of times to retry when waiting for python server. Default: 5
+- ``-T TASK, --task TASK``  Task to perform, required for all Meta UMA and selected SevenNet models, ignored by all others.
 
 an example of how to use this is as follows:
 
@@ -677,8 +685,6 @@ submit with ``sbatch`` or with the following if you are running locally.
     cd /location/of/Si_GA.param
     # in this case we are using a model from NequIP
     ml-toolkit start NequIP-OAM-L
-    # wait for a few seconds as the server needs time to actually start-up
-    sleep 5
     castep.serial Si_GA
     ml-toolkit stop NequIP-OAM-L
 
@@ -707,8 +713,6 @@ you will need to add an extra cmd argument ``-T`` / ``--task`` as follows:
     # change directory to where .param and .cell are located
     cd /location/of/<molecule>.param
     ml-toolkit start uma-s-1 --task <taskname>
-    # wait for a few seconds as the server needs time to actually start-up
-    sleep 5
     castep.serial <molecule>
     ml-toolkit stop uma-s-1
 

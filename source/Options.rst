@@ -10,7 +10,7 @@ Required options:
 The following are strictly required for all containers to function.
 
 - **description** (str): Human readable description of the container.
-- **group** (str): Plain Text label to help group containers with the list command.
+- **groups** list(str): List of Plain Text label(s) to help group containers with the list command.
 - **container_definition** (str): Path to container definition (.def) file or a valid URI link to a container registry. 
   Currently supports `docker://`, `ORAS://` and `Library://` however all must include a tag. e.g. `docker://ubuntu:latest`.
 
@@ -38,8 +38,11 @@ Note:
   Currently can be any of `[]`, `['home']`, `['cwd']`` or `['home','cwd']``
 - **Device** (str):  string to control access to cpu/gpu. 
   Can be any of: `"cuda"`: for nvidia (default), `"rocm"`: for AMD or `"cpu"`: for cpu only.
-- **build_options** dict: Dictionary of key-value pairs to pass though to the Apptainer build script 
+- **build_options** (dict) Dictionary of key-value pairs to pass though to the Apptainer build script 
   to replace `{{ variable }}` entries in build definition (.def) files. [#BuildOptions]_
+- **output_file** (str) file to use for container stdout and stderr when running as background process. default is ModelName.out/ModelName.err
+- **CASTEP** (bool) flag to say the model interfaces with CASTEP (default is False)
+- **available_tasks** List[str] list of tasks to use with --task flag.
 
 .. [#BuildOptions] These can be very useful by allowing you to use a single definition file to build multiple similar containers. See the 
   `Apptainer build docs`_ for more information.
@@ -50,8 +53,9 @@ Note:
 Experimental Options:
 ---------------------
 
-The following are experimental options for Version 0.9. whilst they do work they have not been fully tested and 
-may be changed or removed in future versions, USE WITH CAUTION.
+The following are considered experimental options. whilst they have been tested they may not 
+work on all machines as they require certain permissions and as such depend on how 
+Apptainer has been configured on your machine. They also do not work on Bede, USE WITH CAUTION.
 
 - **encrypted** (bool): **EXPERIMENTAL**, defaults to False. If set to True will ask the user for a password when trying to 
   build/run the container. Note: there is no backup so if you loose/forget the password/keyfile your data is as good as gone. 

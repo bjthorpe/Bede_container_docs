@@ -55,8 +55,9 @@ multiple related containers you wish to group together.
 
 Returning to the config file, the first actual line "Ollama_Test_Container" is a human 
 readable name we will use with the run command. This can be any combination of letters 
-and numbers ending with a colon. However, it cannot contain spaces or special characters. 
-It should also ideally be short and vaguely descriptive.
+and numbers ending with a colon. However, it cannot contain spaces or special characters 
+(except hyphens, underscores and/or periods). It should also ideally be short and vaguely 
+descriptive.
 
 As previously mentioned all lines beyond this point need to be indented. This tells
 ml-toolkit that they are information related to "Ollama_Test_Container". They consist 
@@ -141,7 +142,6 @@ directory, Create a new file. Ollama.def that reads as follows:
         ollama serve
 
     %environment
-        # CHANGE THE NEXT LINE TO THE DIRECTORY YOU WISH TO STORE MODELS IN
         export OLLAMA_MODELS="{{ toolkit_home }}/Models/ollama"
         export PATH="/envs/Ollama_env/bin:$PATH"
 
@@ -176,13 +176,13 @@ However, it is generally good practice to lock containers on a specific
 version of your software that you know works. This then prevents any 
 issues or nasty surprises caused by future updates breaking compatibility.
 
-Omitting the tag also causes issues with Apptainer as if you omit the tag 
+Omitting the tag also causes issues with Apptainer since, if you omit the tag 
 Apptainer has no easy way of telling if it's a file or a link to dockerhub.
 
 In our case we selected the exact version we wanted with the dropdown menu
 to get the appropriate command (shown by the blue box marked 2 on the screenshot). 
 However, if you don't care about the specific version and just want the 
-latest one you will need use the tag :latest.
+latest one you will need use the tag ``:latest``.
 
 A final note for using dockerhub on Bede
 ----------------------------------------
@@ -260,13 +260,12 @@ line 17 defines the directory in which ollama stores models. Here this is set up
 to point to ML_Toolkit directory. The ``{{ toolkit_home }}`` 
 syntax is a special command to tell Apptainer to substitute in the the location 
 of the ML_Toolkit directory. Note you will need to **create the ``Models/ollama`` 
-sub-directories** if you do not already have them.
+directories** in toolkit home if you do not already have them.
 
 .. code-block:: bash
 
     ...
     %environment
-    # DIRECTORY YOU WISH TO STORE MODELS IN
     export OLLAMA_MODELS="{{ toolkit_home }}/Models/ollama"
     export PATH="/envs/Ollama_env/bin:$PATH"
     ...
@@ -283,7 +282,7 @@ Change the container_definition line in ollama.yaml to the following:
 
 .. code-block:: yaml
 
-        container_definition: Defintions/Ollama.def
+        container_definition: Definitions/Ollama.def
 
 Running the LLM
 ***************
@@ -319,6 +318,9 @@ container. Once this is complete we can start the Ollama server with:
 you can them check everything is up and running by going to http://localhost:11434/
 in a web browser and, all being well, you should get a web page with the text 
 "Ollama is running".
+
+you should also see the files ``Ollama_Test_Container.out`` and ``Ollama_Test_Container.err``
+these contain any output and/or errors that has come from the container running in the background. 
 
 If this all looks good you can run the following
 

@@ -153,8 +153,6 @@ you will need to add an extra cmd argument ``-T`` / ``--task`` as follows:
     # change directory to where .param and .cell are located
     cd /location/of/<molecule>.param
     ml-toolkit start uma-s-1 --task <taskname>
-    # wait for a few seconds as the server needs time to actually start-up
-    sleep 5
     castep.serial <molecule>
     ml-toolkit stop uma-s-1
 
