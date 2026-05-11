@@ -307,7 +307,7 @@ Next we need to modify the param file by adding the following devel_code block t
         EXT_CLEANUP=F
 
         # Command used to call the external script used to predict energy/stress/forces
-        EXTCALL: ${ML_TOOLKIT_HOME}/Scripts/predict.sh MatterSim :ENDEXTCALL
+        EXTCALL: ${ML_TOOLKIT_HOME}/Scripts/predict.sh MatRIS_10M_OAM :ENDEXTCALL
 
     ENDPP:
 
@@ -318,10 +318,10 @@ an external script. The line ``EXT=T`` tells CASTEP to call an external command.
 tells it not cleanup the extra files at the end. You may wish to set this to true for larger runs 
 to avoid clogging up the file system. 
 
-The final line of interest is ``EXTCALL: ${ML_TOOLKIT_HOME}/Scripts/predict.sh MatterSim :ENDEXTCALL`` 
+The final line of interest is ``EXTCALL: ${ML_TOOLKIT_HOME}/Scripts/predict.sh MatRIS_10M_OAM :ENDEXTCALL`` 
 This defines the command run by CASTEP each time it needs the energy, stress and forces. In this case
 it uses predict.sh in the ``ML_Toolkit/Scripts`` directory. You will also notice this defines which model to 
-use. This can be any model you like, for this example we have chosen MatterSim.
+use. This can be any model you like, for this example we have chosen one from MatRIS.
 
 Before running CASTEP we next need to ensure we have built an appropriate container for our ML model. 
 As previously discussed we have chosen one from MatRIS for this example.
